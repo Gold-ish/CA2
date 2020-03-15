@@ -1,17 +1,23 @@
-[![Build Status](https://travis-ci.org/dat3startcode/rest-jpa-devops-startcode.svg?branch=master)](https://travis-ci.org/dat3startcode/rest-jpa-devops-startcode)
+[![Build Status](https://travis-ci.org/Gold-ish/CA2.svg?branch=master)](https://travis-ci.org/Gold-ish/CA2)
 
-*This project is meant as start code for projects and exercises given in Flow-1+2 at http://cphbusiness.dk in the Study Program "AP degree in Computer Science"*
-
-*Projects which are expected to use this start-code are projects that require all, or most of the following technologies:*
- - *JPA and REST*
-- *Testing, including database test*
-- *Testing, including tests of REST-API's*
-- *CI and CONTINUOUS DELIVERY*
-
-### Preconditions
-*In order to use this code, you should have a local developer setup + a "matching" droplet on Digital Ocean as described in the 3. semester guidelines* 
-# Getting Started
-
-This project contains two major documentation files: 
- - [First time users - getting started](README_proof_of_concept.md)
- - [How to use for future projects](README_how_to_use.md)
+Sprint one (Friday 13/3 - Monday 16/3): 
+The API description must be almost (we are using an iterative process) complete and available as a page on your deployed project.
+The SCRUM plan for the three mini-sprints must be available as a page on your deployed project. This can either be a copy of our suggestion below, or Sprint-1 as given below and your own plan for the remaining sprints if your “product owner” agrees (red students).
+The CI-pipeline must be setup
+Some of the Entity Classes and the Facade(s) must be ready with supplementing tests
+Sprint two (Tuesday 17/3 - Wednesday 18/3):
+Most of the Entity Classes should be ready
+Sample data should be available in the dev-database
+Some of the endpoints (as a minimum a GET, POST and PUT) must be ready with the corresponding DTO’s and integrations tests
+Sprint three (Thursday 19/3- Sunday 22/3):
+Complete the API (as much as you have time for)
+Implement a simple SPA which as a minimum must have the ability to use some of your GET endpoints and at least one POST endpoint. Consider pages like:
+Get all persons with a given hobby
+Get all persons living in a given city (i.e. 2800 Lyngby)
+Get the count of people with a given hobby
+Get a list of all zip codes in Denmark
+Get a list of companies with more than xx employes
+Get all phone numbers of a person
+Create a Person (with hobbies, phone, address etc.)
+Edit a Person to change hobbies and phone number etc.
+Complete documentation and prepare for your review presentation after the holiday
