@@ -15,36 +15,56 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-//Todo Remove or change relevant parts before ACTUAL use
-@Path("xxx")
-public class RenameMeResource {
+@Path("persons")
+public class PersonsResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(
-                "pu",
-                "jdbc:mysql://localhost:3307/startcode",
-                "dev",
-                "ax2",
-                EMF_Creator.Strategy.CREATE);
-    
+            "pu",
+            "jdbc:mysql://localhost:3307/startcode",
+            "dev",
+            "ax2",
+            EMF_Creator.Strategy.CREATE);
+
     //An alternative way to get the EntityManagerFactory, whithout having to type the details all over the code
     //EMF = EMF_Creator.createEntityManagerFactory(DbSelector.DEV, Strategy.CREATE);
-    
-    private static final FacadeExample FACADE =  FacadeExample.getFacadeExample(EMF);
+    private static final FacadeExample FACADE = FacadeExample.getFacadeExample(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-            
+
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public String demo() {
         return "{\"msg\":\"Hello World\"}";
     }
+
     @Path("count")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public String getRenameMeCount() {
         long count = FACADE.getRenameMeCount();
         //System.out.println("--------------->"+count);
-        return "{\"count\":"+count+"}";  //Done manually so no need for a DTO
+        return "{\"count\":" + count + "}";  //Done manually so no need for a DTO
     }
 
- 
+    @GET
+    @Path("all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getAllPersons() /*throws PersonNotFoundException */ {
+        // PersonDTO psDTO = FACADE.getAllPersons();
+        // return GSON.toJson(psDTO);
+        return GSON.toJson("TestingAll");
+
+    }
+
+    @GET
+    @Path("phoneNumber/{phoneNumber}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPersonOnId(@PathParam("phoneNumber") String phoneNumber) /*throws PersonNotFoundException */ {
+        // PersonDTO pDTO = FACADE.getPerson(phoneNumber);
+//        if (pDTO == null) {
+//            throw new PersonNotFoundException("No person with provided phone number found");
+//        }
+        // return GSON.toJson(pDTO);
+        return GSON.toJson("Testing");
+    }
+
 }
