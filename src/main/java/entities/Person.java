@@ -2,8 +2,10 @@ package entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,22 +32,21 @@ public class Person implements Serializable {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Address address;
     @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Phone> phones;
+    private Set<Phone> phones = new HashSet();
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "link_person_hobby",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "hobby_id")
     )
-    private List<Hobby> hobbies;
+    private List<Hobby> hobbies = new ArrayList();
 
     public Person() {
     }
 
-    public Person(String email, String fName, String lName, Address address) {
+    public Person(String email, String fName, String lName) {
         this.email = email;
         this.fName = fName;
         this.lName = lName;
-        this.address = address;
     }
 
     public Long getId() {
@@ -88,18 +89,22 @@ public class Person implements Serializable {
         this.address = address;
     }
 
-    public List<Phone> getPhones() {
+    public Set<Phone> getPhones() {
         return phones;
     }
+    public Set<String> getPhoneNumbers() {
+        Set<String> phoneNumbers = new HashSet();
+        for (Phone phone : phones) {
+            phoneNumbers.add(phone.getNumber());
+        }
+        return phoneNumbers;
+    }
 
-    public void setPhones(List<Phone> phones) {
+    public void setPhones(Set<Phone> phones) {
         this.phones = phones;
     }
 
     public void addPhone(Phone phone) {
-        if (phones == null) {
-            phones = new ArrayList<>();
-        }
         phones.add(phone);
     }
 
