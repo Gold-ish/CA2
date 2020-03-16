@@ -32,13 +32,13 @@ public class Person implements Serializable {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Address address;
     @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<Phone> phones;
+    private Set<Phone> phones = new HashSet();
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "link_person_hobby",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "hobby_id")
     )
-    private List<Hobby> hobbies;
+    private List<Hobby> hobbies = new ArrayList();
 
     public Person() {
     }

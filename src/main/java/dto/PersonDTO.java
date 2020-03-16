@@ -35,15 +35,17 @@ public class PersonDTO {
         this.id = p.getId();
         this.fName = p.getfName();
         this.lName = p.getlName();
-        this.street = p.getAddress().getStreet();
-        this.city = p.getAddress().getCityinfo().getCity();
-        this.zip = p.getAddress().getCityinfo().getZipCode();
+        if (p.getAddress() != null) {
+            this.street = p.getAddress().getStreet();
+            this.city = p.getAddress().getCityinfo().getCity();
+            this.zip = p.getAddress().getCityinfo().getZipCode();
+        }
         this.hobbies = p.getHobbies().toString();
         this.phones = p.getPhoneNumbers();
+
     }
 
     //Getters & Setters
-
     public Long getId() {
         return id;
     }
@@ -107,6 +109,5 @@ public class PersonDTO {
     public void setPhones(Set<String> phones) {
         this.phones = phones;
     }
-    
-    
+
 }
