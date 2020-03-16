@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/Gold-ish/CA2.svg?branch=master)](https://travis-ci.org/Gold-ish/CA2)
 
-Sprint one (Friday 13/3 - Monday 16/3): 
+Sprint one (Friday 13/3 - Monday 16/3)::
 The API description must be almost (we are using an iterative process) complete and available as a page on your deployed project.
 The SCRUM plan for the three mini-sprints must be available as a page on your deployed project. This can either be a copy of our suggestion below, or Sprint-1 as given below and your own plan for the remaining sprints if your “product owner” agrees (red students).
 The CI-pipeline must be setup
