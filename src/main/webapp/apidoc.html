@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+        <h1>API Documentation</h1>
+        <table border="1" cellpadding="10">
+            <thead>
+                <tr>
+                    <th><b>Method</b></th>
+                    <th><b>URL</b></th>
+                    <th><b>Request Body (JSON)</b></th>
+                    <th><b>Response (JSON)</b></th>
+                    <th><b>Error (e)</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>GET</b></td>
+                    <td>/api/persons</td>
+                    <td></td>
+                    <td>[person, person, ...](1)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>GET</b></td>
+                    <td>/api/persons/{id}</td>
+                    <td></td>
+                    <td>person (1)</td>
+                    <td>(e1)</td>
+                </tr>
+                <tr>
+                    <td><b>POST</b></td>
+                    <td>/api/persons</td>
+                    <td>person (1) without id</td>
+                    <td>person (1)</td>
+                    <td>(e2)</td>
+                </tr>
+                <tr>
+                    <td><b>PUT</b></td>
+                    <td>/api/persons/{id}</td>
+                    <td>person (1)</td>
+                    <td>person (1)</td>
+                    <td>(e1)</td>
+                </tr>
+                <tr>
+                    <td><b>GET</b></td>
+                    <td>/api/persons/{phoneNo}</td>
+                    <td></td>
+                    <td>person (1)</td>
+                    <td>(e1)</td>
+                </tr>
+                <tr>
+                    <td><b>GET</b></td>
+                    <td>/api/persons/{hobby}</td>
+                    <td></td>
+                    <td>[person, person, ...](1)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>GET</b></td>
+                    <td>/api/persons/{city}</td>
+                    <td></td>
+                    <td>[person, person, ...](1)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>GET</b></td>
+                    <td>/api/persons/count/{hobby}</td>
+                    <td></td>
+                    <td>Number</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Request Body and Response Formats</h3>
+        <p><b>(1) Person format (don’t provide ID, for POST)</b> <br>
+            { <br>
+            "id": Number, <br>
+            "firstName": String, <br>
+            "lastName": String, <br>
+            "email": String (email), <br>
+            "phoneNo": ListString, <br>
+            "street": String, <br>
+            "city": String, <br>
+            "zip": String, <br>
+            "hobbies": ListString <br>
+            } <br>
+        </p>
+        <h3>Errors</h3>
+        <p><b>(e) All errors are reported using this format (with the HTTP-status code matching the number)</b> <br>
+            { status : statusCode, "msg": "Explains the problem" } 
+        </p>
+        <ul>
+            <li>(e1) :{ status : 404, "msg": "No content found for this request" }</li>
+            <li>(e2) :{ status : 400, "msg": "Field ‘xxx’ is required" } (for example, no name provided)</li>
+        </ul>
+    </body>
+</html>
