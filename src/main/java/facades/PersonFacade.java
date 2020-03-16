@@ -44,5 +44,21 @@ public class PersonFacade {
         }
         
     }
+    
+    //TODO get JSON array of all persons
+    
+    //TODO get person based on id
+    
+    //TODO post person without id <- Add new person
+    
+    //TODO put person update person based on id
+    
+    //TODO get person based on phone number
+    
+    //TODO get JSON array of who have a certain hobby
+    
+    //TODO get JSON array of persons who live in a certain city
+    
+    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
 
 }
