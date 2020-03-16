@@ -10,7 +10,8 @@ import java.util.Set;
 public class PersonDTO {
 
     private int id;
-    private String name;
+    private String fName;
+    private String lName;
     private String street;
     private String city;
     private String zip;
@@ -18,9 +19,10 @@ public class PersonDTO {
     private Set<String> phones = new HashSet();
 
     //Constructors
-    public PersonDTO(int id, String name, String street, String city, String zip, String hobbies, Set<String> phones) {
+    public PersonDTO(int id, String fName, String lName, String street, String city, String zip, String hobbies, Set<String> phones) {
         this.id = id;
-        this.name = name;
+        this.fName = fName;
+        this.lName = lName;
         this.street = street;
         this.city = city;
         this.zip = zip;
@@ -29,7 +31,6 @@ public class PersonDTO {
     }
 
     //Getters & Setters
-
     public void setId(int id) {
         this.id = id;
     }
