@@ -1,10 +1,7 @@
 package facades;
 
-import entities.RenameMe;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 /**
  *
@@ -40,7 +37,7 @@ public class FacadeExample {
     public long getRenameMeCount(){
         EntityManager em = emf.createEntityManager();
         try{
-            long renameMeCount = (long)em.createQuery("SELECT COUNT(r) FROM RenameMe r").getSingleResult();
+            long renameMeCount = (long)em.createQuery("SELECT COUNT(r) FROM Person r").getSingleResult();
             return renameMeCount;
         }finally{  
             em.close();
