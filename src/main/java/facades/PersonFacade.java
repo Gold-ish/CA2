@@ -5,6 +5,7 @@ import dto.PersonsDTO;
 import entities.Person;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 /**
@@ -15,13 +16,13 @@ public class PersonFacade {
 
     private static PersonFacade instance;
     private static EntityManagerFactory emf;
-    
+
     //Private Constructor to ensure Singleton
-    private PersonFacade() {}
-    
-    
+    private PersonFacade() {
+    }
+
     /**
-     * 
+     *
      * @param _emf
      * @return an instance of this facade class.
      */
@@ -36,7 +37,7 @@ public class PersonFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
+
     public PersonsDTO getAllPersons() {
         EntityManager em = getEntityManager();
         try {
@@ -46,7 +47,7 @@ public class PersonFacade {
             em.close();
         }
     }
-    
+
     public PersonDTO getPersonById(int id) {
         EntityManager em = getEntityManager();
         try {
@@ -56,8 +57,7 @@ public class PersonFacade {
             em.close();
         }
     }
-    
-    
+
     //TODO post person without id <- Add new person
     /*
     public PersonDTO addPerson(String fName, String lName, String phone, String street, String city, Integer zip) {
@@ -77,8 +77,7 @@ public class PersonFacade {
             em.close();
         }
     }
-    */
-    
+     */
     //TODO put person update person based on id
     /*
     public PersonDTO editPerson(PersonDTO p) {
@@ -103,29 +102,41 @@ public class PersonFacade {
             em.close();
         }
     }
-    */
-    
-    
-    
-    
-    
-    
+     */
     //TODO get person based on phone number
+    public PersonDTO getPersonByPhone(String number) {
+        EntityManager em = getEntityManager();
+        try {
+            Person p = em.find(Person.class, number);
+            return new PersonDTO(p);
+        } finally {
+            em.close();
+        }
+    }
 
     //TODO get JSON array of who have a certain hobby
     
     //TODO get JSON array of persons who live in a certain city
     
     //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
+    public int getAmountOfPersonsWithHobby(String hobby) {// Dunno if this will work - temp
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Query q = em.createQuery("SELECT person_id, hobby_id, NAME, COUNT(NAME) "
+                    + "FROM link_person_hobby "
+                    + "JOIN HOBBY "
+                    + "ON link_person_hobby.hobby_id = HOBBY.ID "
+                    + "WHERE HOBBY.NAME = :hobbyName");
+            q.setParameter("hobbyName", hobby);
+            em.getTransaction().commit();
+            System.out.println(q);
+            return 0;//temp
+        } finally {
+            em.close();
+        }
+    }
 
-    
-    
-    
-    
-    
-    
-    
-    
     /*
     Needs check for everything we cascade
     
@@ -143,7 +154,5 @@ public class PersonFacade {
         }
     }
     
-    */
-    
-    
+     */
 }
