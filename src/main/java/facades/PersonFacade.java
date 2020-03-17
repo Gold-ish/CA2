@@ -2,26 +2,28 @@ package facades;
 
 import dto.PersonDTO;
 import dto.PersonsDTO;
-import entities.Person;
+import entities.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-/**
- *
- * Rename Class to a relevant name Add add relevant facade methods
- */
 public class PersonFacade {
 
     private static PersonFacade instance;
     private static EntityManagerFactory emf;
-    
+
     //Private Constructor to ensure Singleton
-    private PersonFacade() {}
-    
-    
+    private PersonFacade() {
+    }
+
     /**
-     * 
+     *
      * @param _emf
      * @return an instance of this facade class.
      */
@@ -36,7 +38,7 @@ public class PersonFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
+
     public PersonsDTO getAllPersons() {
         EntityManager em = getEntityManager();
         try {
@@ -46,7 +48,7 @@ public class PersonFacade {
             em.close();
         }
     }
-    
+
     public PersonDTO getPersonById(int id) {
         EntityManager em = getEntityManager();
         try {
@@ -56,28 +58,41 @@ public class PersonFacade {
             em.close();
         }
     }
-    
-    
+
     //TODO post person without id <- Add new person
-    /*
-    public PersonDTO addPerson(String fName, String lName, String phone, String street, String city, Integer zip) {
+    public PersonDTO addPerson(String fName, String lName, String email, String street,
+            String city, String zip, String hobbies, String phones) {
         EntityManager em = getEntityManager();
-        Address adr = new Address(street, zip, city);
-        Address check = checkAddress(adr, em);
-        if (check != null) {
-            adr = check;
+        CityInfo cityInfo = new CityInfo(city, zip);
+        Address adr = new Address(street, cityInfo);
+        List<Hobby> hobbiesList = new ArrayList<>();
+        if (hobbies != null) {
+            hobbiesList = makeHobbyList(hobbies);
         }
-        Person p = new Person(fName, lName, phone, adr);
+        Set<Phone> phonesSet = new HashSet<>();
+        if (phones != null) {
+            phonesSet = makePhoneSet(phones);
+        }
+//        Address check = checkAddress(adr, em);
+//        if (check != null) {
+//            adr = check;
+//        }
+        Person p = new Person(email, fName, lName);
+        phonesSet.forEach((phone) -> {
+            phone.setPerson(p);
+        });
         try {
             em.getTransaction().begin();
             em.persist(p);
+            p.setAddress(adr);
+            p.setHobbies(hobbiesList);
+            p.setPhones(phonesSet);
             em.getTransaction().commit();
             return new PersonDTO(p);
         } finally {
             em.close();
         }
     }
-    */
     
     //TODO put person update person based on id
     /*
@@ -103,47 +118,61 @@ public class PersonFacade {
             em.close();
         }
     }
-    */
-    
-    
-    
-    
-    
-    
+     */
     //TODO get person based on phone number
-
-    //TODO get JSON array of who have a certain hobby
-    
-    //TODO get JSON array of persons who live in a certain city
-    
-    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
-
-    
-    
-    
-    
-    
-    
-    
-    
-    /*
-    Needs check for everything we cascade
-    
-    private Address checkAddress(Address adr, EntityManager em) {
+    public PersonDTO getPersonByPhone(String number) {
+        EntityManager em = getEntityManager();
         try {
-            TypedQuery<Address> q = em.createQuery("SELECT a FROM Address a WHERE a.city = :city AND a.street = :street AND a.zip = :zip", Address.class);
-            q.setParameter("street", adr.getStreet());
-            q.setParameter("city", adr.getCity());
-            q.setParameter("zip", adr.getZip());
-            Address result = q.getSingleResult();
-            return result;
-        } catch (Exception e) {
-            //System.out.println(e);
-            return null;
+            Person p = em.find(Person.class, number);
+            return new PersonDTO(p);
+        } finally {
+            em.close();
         }
     }
+
+    //TODO get JSON array of who have a certain hobby
+
+    //TODO get JSON array of persons who live in a certain city
+
+    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
+    public int getAmountOfPersonsWithHobby(String hobby) {// Dunno if this will work - temp
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Query q = em.createQuery("SELECT person_id, hobby_id, NAME, COUNT(NAME) "
+                    + "FROM link_person_hobby "
+                    + "JOIN HOBBY "
+                    + "ON link_person_hobby.hobby_id = HOBBY.ID "
+                    + "WHERE HOBBY.NAME = :hobbyName");
+            q.setParameter("hobbyName", hobby);
+            em.getTransaction().commit();
+            System.out.println(q);
+            return 0;//temp
+        } finally {
+            em.close();
+        }
+    }
+
     
-    */
-    
-    
+    //Needs check for everything we cascade
+    private List<Hobby> makeHobbyList(String hobbiesStr) {
+        List<Hobby> hobbies = new ArrayList<>();
+        String[] values = hobbiesStr.split(",");
+        List<String> strList = Arrays.asList(values);
+        strList.stream().map((hobbyName) -> new Hobby(hobbyName, "")).forEachOrdered((hobby) -> {
+            hobbies.add(hobby);
+        });
+        return hobbies;
+    }
+
+    private Set<Phone> makePhoneSet(String phonesStr) {
+        Set<Phone> phones = new HashSet<>();
+        String[] values = phonesStr.split(",");
+        Set<String> strSet = new HashSet<>(Arrays.asList(values));
+        strSet.stream().map((phoneNo) -> new Phone(phoneNo, "")).forEachOrdered((phone) -> {
+            phones.add(phone);
+        });
+        return phones;
+    }
+
 }

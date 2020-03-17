@@ -22,7 +22,7 @@ public class CityInfo implements Serializable {
     private Long id;
     private String city;
     private String zipCode;
-    @OneToMany(mappedBy = "cityinfo")
+    @OneToMany(mappedBy = "cityInfo")
     private List<Address> addresses;
     
     public CityInfo() {
