@@ -37,30 +37,16 @@ public class PersonFacade {
         return emf.createEntityManager();
     }
     
-    //TODO Remove/Change this before use
-    public long getRenameMeCount(){
-        EntityManager em = getEntityManager();
-        try{
-            long renameMeCount = (long)em.createQuery("SELECT COUNT(r) FROM Person r").getSingleResult();
-            return renameMeCount;
-        }finally{  
-            em.close();
-        }
-        
-    }
-    
-    //TODO get JSON array of all persons
     public PersonsDTO getAllPersons() {
         EntityManager em = getEntityManager();
         try {
-            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p", Person.class);
+            TypedQuery<Person> q = em.createNamedQuery("Person.getAll", Person.class);
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
         }
     }
     
-    //TODO get person based on id
     public PersonDTO getPersonById(int id) {
         EntityManager em = getEntityManager();
         try {

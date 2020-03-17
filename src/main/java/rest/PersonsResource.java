@@ -26,6 +26,13 @@ public class PersonsResource {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public String demo() {
+        return "{\"msg\":\"Hello World\"}";
+    }
+
+    @GET
+    @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
     public String getAllPersons() {
         PersonsDTO psDTO = FACADE.getAllPersons();
