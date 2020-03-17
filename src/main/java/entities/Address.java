@@ -27,7 +27,7 @@ public class Address implements Serializable {
     @OneToMany(mappedBy = "address")
     private List<Person> persons;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private CityInfo cityinfo;
+    private CityInfo cityInfo;
     
     public Address() {
     }
@@ -35,6 +35,11 @@ public class Address implements Serializable {
     public Address(String street, String additionalInfo) {
         this.street = street;
         this.additionalInfo = additionalInfo;
+    }
+    
+    public Address(String street, CityInfo cityInfo) {
+        this.street = street;
+        this.cityInfo = cityInfo;
     }
 
     public Long getId() {
@@ -76,12 +81,12 @@ public class Address implements Serializable {
         persons.add(person);
     }
 
-    public CityInfo getCityinfo() {
-        return cityinfo;
+    public CityInfo getCityInfo() {
+        return cityInfo;
     }
 
-    public void setCityinfo(CityInfo cityinfo) {
-        this.cityinfo = cityinfo;
+    public void setCityInfo(CityInfo cityInfo) {
+        this.cityInfo = cityInfo;
     }
 
     
@@ -112,7 +117,7 @@ public class Address implements Serializable {
 
     @Override
     public String toString() {
-        return "Address{" + "id=" + id + ", street=" + street + ", additionalInfo=" + additionalInfo + ", persons=" + persons + ", cityinfo=" + cityinfo + '}';
+        return "Address{" + "id=" + id + ", street=" + street + ", additionalInfo=" + additionalInfo + ", persons=" + persons + ", cityinfo=" + cityInfo + '}';
     }
         
     

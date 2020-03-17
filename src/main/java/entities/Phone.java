@@ -63,8 +63,6 @@ public class Phone implements Serializable {
         this.person = person;
     }
 
-    
-    
     @Override
     public int hashCode() {
         int hash = 7;
