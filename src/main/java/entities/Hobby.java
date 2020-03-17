@@ -31,7 +31,7 @@ public class Hobby implements Serializable {
         this.name = name;
         this.description = description;
     }
-
+    
     public Long getId() {
         return id;
     }
