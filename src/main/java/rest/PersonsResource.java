@@ -6,10 +6,7 @@ import dto.PersonDTO;
 import dto.PersonsDTO;
 import facades.PersonFacade;
 import javax.persistence.EntityManagerFactory;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,13 +29,13 @@ public class PersonsResource {
         return GSON.toJson(psDTO);
     }
 
-//    @GET
-//    @Path("/{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public String getPersonById(@PathParam("id") int id) {
-//        PersonDTO pDTO = FACADE.getPersonById(id);
-//        return GSON.toJson(pDTO);
-//    }
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPersonById(@PathParam("id") int id) {
+        PersonDTO pDTO = FACADE.getPersonById(id);
+        return GSON.toJson(pDTO);
+    }
 //
 //    @POST
 //    @Consumes({MediaType.APPLICATION_JSON})
@@ -47,7 +44,7 @@ public class PersonsResource {
 //        PersonDTO pCon = FACADE.addPerson(GSON.fromJson(person, PersonDTO.class));
 //        return GSON.toJson(pCon);
 //    }
-//
+
 //    @PUT
 //    @Path("/{id}")
 //    @Consumes(MediaType.APPLICATION_JSON)
@@ -57,14 +54,14 @@ public class PersonsResource {
 //        pCon.setId(id);
 //        return GSON.toJson(FACADE.editPerson(pCon));
 //    }
-//
-//    @GET
-//    @Path("phone/{phoneNo}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public String getPersonByPhoneNo(@PathParam("phoneNo") String phoneNo) {
-//        PersonDTO pDTO = FACADE.getPersonByPhone(phoneNo);
-//        return GSON.toJson(pDTO);
-//    }
+
+    @GET
+    @Path("phone/{phoneNo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPersonByPhoneNo(@PathParam("phoneNo") String phoneNo) {
+        PersonDTO pDTO = FACADE.getPersonByPhone(phoneNo);
+        return GSON.toJson(pDTO);
+    }
 //
 //    @GET
 //    @Path("hobby/{hobby}")

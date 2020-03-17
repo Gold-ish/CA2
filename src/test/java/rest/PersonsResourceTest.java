@@ -1,6 +1,7 @@
 package rest;
 
 import entities.Person;
+import entities.Phone;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
@@ -12,7 +13,8 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,6 +70,7 @@ public class PersonsResourceTest {
         p1 = new Person("carol@hoeg.iversen", "Caroline", "HoegIversen");
         p2 = new Person("tobias@anker.boldtJ", "Tobias", "AnkerB-J");
         p3 = new Person("allan@bo.simonsen", "Allan", "Simonsen");
+        Phone phone1 = new Phone("29384756", "Phone Number 1");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -78,6 +81,8 @@ public class PersonsResourceTest {
             em.persist(p1);
             em.persist(p2);
             em.persist(p3);
+            em.persist(phone1);
+            p2.addPhone(phone1);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -107,9 +112,32 @@ public class PersonsResourceTest {
                 .get("/persons").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("personsList.fName", contains("Allan", "Tobias", "Caroline"))
-                .body("personsList.lName", contains("Simonsen", "AnkerB-J", "HoegIversen"));
+                .body("personsList.fName", containsInAnyOrder("Allan", "Tobias", "Caroline"))
+                .body("personsList.lName", containsInAnyOrder("Simonsen", "AnkerB-J", "HoegIversen"));
     }
     
+    @Test
+    public void testGetPersonById() {
+        given()
+                .contentType("application/json")
+                .get("/persons/" + p3.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("fName", equalTo("Allan"))
+                .body("lName", equalTo("Simonsen"));
+    }
 
+    
+    @Test
+    public void testGetPersonByPhone() {
+        given()
+                .contentType("application/json")
+                .get("/persons/phone/" + p2.getPhoneNumbers().iterator().next()).then()
+                .assertThat()
+               // .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("fName", equalTo("Tobias"))
+                .body("lName", equalTo("AnkerB-J"));
+    }
+    
+    
 }

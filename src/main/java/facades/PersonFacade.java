@@ -52,7 +52,7 @@ public class PersonFacade {
     public PersonDTO getPersonById(int id) {
         EntityManager em = getEntityManager();
         try {
-            Person p = em.find(Person.class, id);
+            Person p = em.find(Person.class, (long) id);
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -119,12 +119,14 @@ public class PersonFacade {
         }
     }
      */
+    //TODO Fejlhåndtering på getResultList.get(0)
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
         EntityManager em = getEntityManager();
         try {
-            Person p = em.find(Person.class, number);
-            return new PersonDTO(p);
+            TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
+            q.setParameter("number", number);
+            return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
         }
