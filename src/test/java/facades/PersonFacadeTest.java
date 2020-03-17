@@ -1,5 +1,6 @@
 package facades;
 
+import dto.PersonDTO;
 import dto.PersonsDTO;
 import entities.Person;
 import javax.persistence.EntityManager;
@@ -8,7 +9,7 @@ import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.beans.HasProperty.hasProperty;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,26 +17,34 @@ import utils.EMF_Creator;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
 
-public class FacadeExampleTest {
+public class PersonFacadeTest {
 
     private static EntityManagerFactory emf;
     private static PersonFacade facade;
     private static Person p1, p2;
-    
-    public FacadeExampleTest() {
+
+    public PersonFacadeTest() {
     }
-    
+
     @BeforeAll
     public static void setUpClass() {
-       emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST,Strategy.DROP_AND_CREATE);
-       facade = PersonFacade.getPersonFacade(emf);
+        emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST, 
+                Strategy.DROP_AND_CREATE);
+        facade = PersonFacade.getPersonFacade(emf);
     }
 
     @AfterAll
     public static void tearDownClass() {
-        //..
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
-    
+
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
@@ -53,16 +62,12 @@ public class FacadeExampleTest {
         }
     }
 
-    @AfterEach
-    public void tearDown() {
-        //..
-    }
-
     @Test
     public void testGetAllPersons() {
         System.out.println("getAllPersons");
         PersonsDTO persons = facade.getAllPersons();
-        assertThat(persons.getPersonList(), everyItem(hasProperty("fName")));
+        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+//        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
     }
 
 }

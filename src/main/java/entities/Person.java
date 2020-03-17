@@ -15,11 +15,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Entity
-@NamedQuery(name = "Person.deleteAllRows", query = "DELETE from Person")
+@NamedQueries({
+    @NamedQuery(name = "Person.deleteAllRows", query = "DELETE FROM Person"),
+    @NamedQuery(name = "Person.getAll", query = "SELECT p FROM Person p")
+})
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
