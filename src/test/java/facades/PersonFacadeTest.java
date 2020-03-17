@@ -75,6 +75,7 @@ public class PersonFacadeTest {
         assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
 //        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
     }
+    
     /*
     @Test
     public void testAddPerson() {
@@ -93,8 +94,8 @@ public class PersonFacadeTest {
         hobbiesList.add(new Hobby("dancing", ""));
         hobbiesList.get(0).setId(1L);
         hobbiesList.get(1).setId(2L);
-        hobbiesList.get(0).setPersons(emptyPersonList);
-        hobbiesList.get(1).setPersons(emptyPersonList);
+        //hobbiesList.get(0).setPersons(emptyPersonList);
+       // hobbiesList.get(1).setPersons(emptyPersonList);
         p.setHobbies(hobbiesList);
         //Make Phone
         Set<Phone> phoneNumber = new HashSet();
@@ -108,6 +109,7 @@ public class PersonFacadeTest {
         System.out.println("exp " + expectedPersonResult);
         System.out.println("act " + actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
-    }*/
+    }
+    */
 
 }
