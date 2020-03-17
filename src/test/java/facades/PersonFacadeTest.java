@@ -79,16 +79,15 @@ public class PersonFacadeTest {
     @Test
     public void testAddPerson() {
         //Make Person
-        Person p = new Person("email@test.com", "Jane", "Dow");
+        Person p = new Person("jane@doe.com", "Jane", "Dow");
         //Make Address
         CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
         Address adr = new Address("West Street", cityInfo);
         p.setAddress(adr);
         //Make Hobbies
-        List<Hobby> hobbiesList = new ArrayList<>();
-        
+        List<Hobby> hobbiesList = new ArrayList();
+
         List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
-        
         
         hobbiesList.add(new Hobby("programming", ""));
         hobbiesList.add(new Hobby("dancing", ""));
@@ -107,7 +106,7 @@ public class PersonFacadeTest {
         
         //Der er noget underligt her i Hobby delen med Persons.. Kan ikke få testen til at mache outputtet.
         System.out.println("exp " + expectedPersonResult);
-        System.out.println("act " +actualAddPersonResult);
+        System.out.println("act " + actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
     }*/
 
