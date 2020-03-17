@@ -2,21 +2,12 @@ package facades;
 
 
 import dto.*;
-import entities.Address;
-import entities.CityInfo;
-import entities.Hobby;
 import entities.Person;
-import entities.Phone;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,7 +75,7 @@ public class PersonFacadeTest {
         assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
 //        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
     }
-    
+    /*
     @Test
     public void testAddPerson() {
         //Make Person
@@ -118,6 +109,6 @@ public class PersonFacadeTest {
         System.out.println("exp " + expectedPersonResult);
         System.out.println("act " +actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
-    }
+    }*/
 
 }
