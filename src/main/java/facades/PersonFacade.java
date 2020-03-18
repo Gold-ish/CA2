@@ -66,7 +66,7 @@ public class PersonFacade {
         /*
         Not working it should see if there allready is a address in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
-        */
+         */
         CityInfo cityInfo = new CityInfo(city, zip);
         Address adr = new Address(street, cityInfo);
         /*Address checkAdr = checkAddress(adr, em);
@@ -77,7 +77,7 @@ public class PersonFacade {
         /*
         Not working it should see if there allready is a Hobby in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
-        */
+         */
         List<Hobby> hobbiesList = new ArrayList<>();
         if (hobbies != null) {
             hobbiesList = makeHobbyList(hobbies);
@@ -90,7 +90,7 @@ public class PersonFacade {
         /*
         If there allready is a phone with the same number then it shouldn't be able to add it again.
         2 different people can't have the same phone number.
-        */
+         */
         Set<Phone> phonesSet = new HashSet<>();
         if (phones != null) {
             phonesSet = makePhoneSet(phones);
@@ -159,6 +159,20 @@ public class PersonFacade {
 
     //TODO get JSON array of who have a certain hobby
     //TODO get JSON array of persons who live in a certain city
+    public PersonsDTO getPersonsFromCity(String city) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
+                    + "JOIN p.address Address "
+                    + "JOIN address.cityInfo CityInfo "
+                    + "WHERE CityInfo.city = :city", Person.class);
+            q.setParameter("city", city);
+            return new PersonsDTO(q.getResultList());
+        } finally {
+            em.close();
+        }
+    }
+
     //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
     public int getAmountOfPersonsWithHobby(String hobby) {// Dunno if this will work - temp
         EntityManager em = getEntityManager();
@@ -257,5 +271,4 @@ public class PersonFacade {
             return null;
         }
     }*/
-
 }

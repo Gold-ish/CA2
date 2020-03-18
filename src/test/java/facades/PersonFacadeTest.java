@@ -2,6 +2,8 @@ package facades;
 
 
 import dto.*;
+import entities.Address;
+import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import javax.persistence.EntityManager;
@@ -56,6 +58,12 @@ public class PersonFacadeTest {
         p2 = new Person("Alfred@Mail.com", "Alfred", "Johansen");
         Hobby h1 = new Hobby("Programming", "testTest");
         Hobby h2 = new Hobby("Programming", "testTest");
+        Address a1 = new Address("StreetName1", "AdditionalInfo");
+        Address a2 = new Address("StreetName2", "AdditionalInfo");
+        a1.setCityInfo(new CityInfo("CityName", "7862"));
+        a2.setCityInfo(new CityInfo("CityNameExtra", "52857862"));
+        p1.setAddress(a1);
+        p2.setAddress(a2);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -117,4 +125,11 @@ public class PersonFacadeTest {
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
     }*/
 
+    @Test
+    public void testGetPersonsFromCity() {
+        System.out.println("getPersonsFromCity");
+        PersonsDTO persons = facade.getPersonsFromCity("CityName");
+        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+//        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
+    }
 }
