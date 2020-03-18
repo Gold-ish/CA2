@@ -99,6 +99,7 @@ public class PersonFacade {
                 phonesSet = checkPhn;
             }*/
         }
+
         //Create Person
         Person p = new Person(email, fName, lName);
         phonesSet.forEach((phone) -> {
@@ -120,30 +121,20 @@ public class PersonFacade {
     }
 
     //TODO put person update person based on id
-    /*
     public PersonDTO editPerson(PersonDTO p) {
         EntityManager em = getEntityManager();
+        Person person = new Person(p);
+        person.setPhones(makePhoneSet(p.getPhones()));
+        person.setHobbies(makeHobbyList(p.getHobbies()));
         try {
-            Person person = em.find(Person.class, p.getId());
-            Address address = new Address(p.getStreet(), p.getZip(), p.getCity());
-            Address check = checkAddress(address, em);
-            if (check != null) {
-                address = check;
-            }
             em.getTransaction().begin();
-            person.setFirstName(p.getFirstName());
-            person.setLastName(p.getLastName());
-            person.setPhone(p.getPhone());
-            person.setLastEdited(new Date());
-            person.setAddress(address);
-            
+            em.merge(person);
             em.getTransaction().commit();
             return new PersonDTO(person);
         } finally {
             em.close();
         }
     }
-     */
     //TODO Fejlhåndtering på getResultList.get(0)
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
@@ -220,6 +211,14 @@ public class PersonFacade {
         Set<Phone> phones = new HashSet<>();
         String[] values = phonesStr.split(",");
         Set<String> strSet = new HashSet<>(Arrays.asList(values));
+        strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
+            phones.add(phone);
+        });
+        return phones;
+    }
+    
+    private Set<Phone> makePhoneSet(Set<String> strSet) {
+        Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
             phones.add(phone);
         });

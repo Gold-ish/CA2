@@ -1,5 +1,6 @@
 package entities;
 
+import dto.PersonDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +52,14 @@ public class Person implements Serializable {
         this.email = email;
         this.fName = fName;
         this.lName = lName;
+    }
+
+    public Person(PersonDTO p) {
+        this.id = p.getId();
+        this.fName = p.getfName();
+        this.lName = p.getlName();
+        this.address = new Address(p.getStreet(), 
+                new CityInfo(p.getCity(), p.getZip()));
     }
 
     public Long getId() {
