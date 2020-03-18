@@ -2,6 +2,8 @@ package facades;
 
 
 import dto.*;
+import entities.Address;
+import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import javax.persistence.EntityManager;
@@ -9,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasProperty;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,21 +35,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-//    @AfterAll
-//    public static void tearDownClass() {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            em.getTransaction().begin();
-//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-//            em.getTransaction().commit();
-//        } finally {
-//            em.close();
-//        }
-//    }
+    @AfterAll
+    public static void tearDownClass() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 
     @BeforeEach
     public void setUp() {
@@ -56,6 +59,12 @@ public class PersonFacadeTest {
         p2 = new Person("Alfred@Mail.com", "Alfred", "Johansen");
         Hobby h1 = new Hobby("Programming", "testTest");
         Hobby h2 = new Hobby("Programming", "testTest");
+        Address a1 = new Address("StreetName1", "AdditionalInfo");
+        Address a2 = new Address("StreetName2", "AdditionalInfo");
+        a1.setCityInfo(new CityInfo("CityName", "7862"));
+        a2.setCityInfo(new CityInfo("CityNameExtra", "52857862"));
+        p1.setAddress(a1);
+        p2.setAddress(a2);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -115,6 +124,29 @@ public class PersonFacadeTest {
         System.out.println("exp " + expectedPersonResult);
         System.out.println("act " + actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
-    }*/
-
+    }
+    */
+    @Test 
+    public void testEditPerson() {
+        p1.setfName("John");
+        p1.addHobby(new Hobby("eating", "stuffing food in your face"));
+        PersonDTO pDTO = new PersonDTO(p1);
+        PersonDTO editPerson = facade.editPerson(pDTO);
+        System.out.println(editPerson);
+    }
+    
+    @Test
+    public void testGetPersonsByHobby() {
+        System.out.println("getAllPersonsByHobby");
+        PersonsDTO persons = facade.getAllPersonsByHobby("Programming");
+        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+    }
+    
+    @Test
+    public void testGetPersonsFromCity() {
+        System.out.println("getPersonsFromCity");
+        PersonsDTO persons = facade.getPersonsFromCity("CityName");
+        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+//        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
+    }
 }

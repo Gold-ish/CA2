@@ -66,7 +66,7 @@ public class PersonFacade {
         /*
         Not working it should see if there allready is a address in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
-        */
+         */
         CityInfo cityInfo = new CityInfo(city, zip);
         Address adr = new Address(street, cityInfo);
         /*Address checkAdr = checkAddress(adr, em);
@@ -77,7 +77,7 @@ public class PersonFacade {
         /*
         Not working it should see if there allready is a Hobby in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
-        */
+         */
         List<Hobby> hobbiesList = new ArrayList<>();
         if (hobbies != null) {
             hobbiesList = makeHobbyList(hobbies);
@@ -90,7 +90,7 @@ public class PersonFacade {
         /*
         If there allready is a phone with the same number then it shouldn't be able to add it again.
         2 different people can't have the same phone number.
-        */
+         */
         Set<Phone> phonesSet = new HashSet<>();
         if (phones != null) {
             phonesSet = makePhoneSet(phones);
@@ -99,6 +99,7 @@ public class PersonFacade {
                 phonesSet = checkPhn;
             }*/
         }
+
         //Create Person
         Person p = new Person(email, fName, lName);
         phonesSet.forEach((phone) -> {
@@ -120,30 +121,20 @@ public class PersonFacade {
     }
 
     //TODO put person update person based on id
-    /*
     public PersonDTO editPerson(PersonDTO p) {
         EntityManager em = getEntityManager();
+        Person person = new Person(p);
+        person.setPhones(makePhoneSet(p.getPhones()));
+        person.setHobbies(makeHobbyList(p.getHobbies()));
         try {
-            Person person = em.find(Person.class, p.getId());
-            Address address = new Address(p.getStreet(), p.getZip(), p.getCity());
-            Address check = checkAddress(address, em);
-            if (check != null) {
-                address = check;
-            }
             em.getTransaction().begin();
-            person.setFirstName(p.getFirstName());
-            person.setLastName(p.getLastName());
-            person.setPhone(p.getPhone());
-            person.setLastEdited(new Date());
-            person.setAddress(address);
-            
+            em.merge(person);
             em.getTransaction().commit();
             return new PersonDTO(person);
         } finally {
             em.close();
         }
     }
-     */
     //TODO Fejlhåndtering på getResultList.get(0)
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
@@ -158,21 +149,39 @@ public class PersonFacade {
     }
 
     //TODO get JSON array of who have a certain hobby
+    public PersonsDTO getAllPersonsByHobby(String hobby) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
+                    + "INNER JOIN p.hobbies Hobby "
+                    + "WHERE Hobby.name = :hobby", Person.class);
+            q.setParameter("hobby", hobby);
+            return new PersonsDTO(q.getResultList());
+        } finally {
+            em.close();
+        }
+    }
+        
     //TODO get JSON array of persons who live in a certain city
-    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
-    public int getAmountOfPersonsWithHobby(String hobby) {// Dunno if this will work - temp
+    public PersonsDTO getPersonsFromCity(String city) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
+                    + "JOIN p.address Address "
+                    + "JOIN address.cityInfo CityInfo "
+                    + "WHERE CityInfo.city = :city", Person.class);
+            q.setParameter("city", city);
+            return new PersonsDTO(q.getResultList());
+        } finally {
+            em.close();
+        }
+    }
+
+    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby  
+    public int getAmountOfPersonsWithHobby(String hobby) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-//            Query q = em.createNativeQuery("SELECT COUNT(*) "
-//                    + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
-//                    + "FROM link_person_hobby "
-//                    + "JOIN HOBBY "
-//                    + "ON link_person_hobby.hobby_id = HOBBY.id "
-//                    + "WHERE HOBBY.name = :hobbyName) "
-//                    + "AS returnValue;");
-//            q.setParameter("hobbyName", hobby);
-
             int rowCnt = Math.toIntExact((long) em.createNativeQuery("SELECT COUNT(*) "
                     + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
                     + "FROM link_person_hobby "
@@ -181,8 +190,6 @@ public class PersonFacade {
                     + "WHERE HOBBY.name = '" + hobby + "') "
                     + "AS returnValue;").getSingleResult());
             em.getTransaction().commit();
-            //return ((Number) q.getSingleResult()).intValue();
-            //return ((Number)q.getResultList().get(0)).intValue();
             return rowCnt;
         } finally {
             em.close();
@@ -204,6 +211,14 @@ public class PersonFacade {
         Set<Phone> phones = new HashSet<>();
         String[] values = phonesStr.split(",");
         Set<String> strSet = new HashSet<>(Arrays.asList(values));
+        strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
+            phones.add(phone);
+        });
+        return phones;
+    }
+    
+    private Set<Phone> makePhoneSet(Set<String> strSet) {
+        Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
             phones.add(phone);
         });
@@ -257,5 +272,4 @@ public class PersonFacade {
             return null;
         }
     }*/
-
 }
