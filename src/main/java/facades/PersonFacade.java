@@ -139,9 +139,11 @@ public class PersonFacade {
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
         EntityManager em = getEntityManager();
+        System.out.println(number);
         try {
             TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
             q.setParameter("number", number);
+            
             return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
