@@ -86,7 +86,9 @@ public class PersonFacade {
             p.setAddress(adr);
             p.setHobbies(hobbiesList);
             p.setPhones(phonesSet);
+            System.out.println(p.getHobbies());
             em.getTransaction().commit();
+            System.out.println(p.getHobbies());
             return new PersonDTO(p);
         } finally {
             em.close();
