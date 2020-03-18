@@ -162,8 +162,8 @@ public class PersonFacade {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
-                    + "JOIN p.hobby Hobby "
-                    + "WHERE Hobby.hobby = :hobby", Person.class);
+                    + "INNER JOIN p.hobbies Hobby "
+                    + "WHERE Hobby.name = :hobby", Person.class);
             q.setParameter("hobby", hobby);
             return new PersonsDTO(q.getResultList());
         } finally {
@@ -187,19 +187,10 @@ public class PersonFacade {
     }
 
     //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
-    public int getAmountOfPersonsWithHobby(String hobby) {// Dunno if this will work - temp
+    public int getAmountOfPersonsWithHobby(String hobby) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-//            Query q = em.createNativeQuery("SELECT COUNT(*) "
-//                    + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
-//                    + "FROM link_person_hobby "
-//                    + "JOIN HOBBY "
-//                    + "ON link_person_hobby.hobby_id = HOBBY.id "
-//                    + "WHERE HOBBY.name = :hobbyName) "
-//                    + "AS returnValue;");
-//            q.setParameter("hobbyName", hobby);
-
             int rowCnt = Math.toIntExact((long) em.createNativeQuery("SELECT COUNT(*) "
                     + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
                     + "FROM link_person_hobby "
@@ -208,8 +199,6 @@ public class PersonFacade {
                     + "WHERE HOBBY.name = '" + hobby + "') "
                     + "AS returnValue;").getSingleResult());
             em.getTransaction().commit();
-            //return ((Number) q.getSingleResult()).intValue();
-            //return ((Number)q.getResultList().get(0)).intValue();
             return rowCnt;
         } finally {
             em.close();
