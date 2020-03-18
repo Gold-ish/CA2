@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class PersonFacade {
@@ -52,7 +51,7 @@ public class PersonFacade {
     public PersonDTO getPersonById(int id) {
         EntityManager em = getEntityManager();
         try {
-            Person p = em.find(Person.class, id);
+            Person p = em.find(Person.class, (long) id);
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -123,12 +122,14 @@ public class PersonFacade {
         }
     }
      */
+    //TODO Fejlhåndtering på getResultList.get(0)
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
         EntityManager em = getEntityManager();
         try {
-            Person p = em.find(Person.class, number);
-            return new PersonDTO(p);
+            TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
+            q.setParameter("number", number);
+            return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
         }
@@ -143,17 +144,26 @@ public class PersonFacade {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Query q = em.createNativeQuery("SELECT COUNT(*) "
+//            Query q = em.createNativeQuery("SELECT COUNT(*) "
+//                    + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
+//                    + "FROM link_person_hobby "
+//                    + "JOIN HOBBY "
+//                    + "ON link_person_hobby.hobby_id = HOBBY.id "
+//                    + "WHERE HOBBY.name = :hobbyName) "
+//                    + "AS returnValue;");
+//            q.setParameter("hobbyName", hobby);
+
+int rowCnt= Math.toIntExact((long)em.createNativeQuery("SELECT COUNT(*) "
                     + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
                     + "FROM link_person_hobby "
                     + "JOIN HOBBY "
                     + "ON link_person_hobby.hobby_id = HOBBY.id "
-                    + "WHERE HOBBY.name = :hobbyName) "
-                    + "AS returnValue;");
-            q.setParameter("hobbyName", hobby);
+                    + "WHERE HOBBY.name = '" + hobby + "') "
+                    + "AS returnValue;").getSingleResult());
             em.getTransaction().commit();
-            System.out.println(q);
-            return 0;//temp
+            //return ((Number) q.getSingleResult()).intValue();
+            //return ((Number)q.getResultList().get(0)).intValue();
+            return rowCnt;
         } finally {
             em.close();
         }
