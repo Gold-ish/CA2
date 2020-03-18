@@ -79,12 +79,11 @@ public class PersonsResource {
 //        return GSON.toJson(pDTO);
 //    }
 //
-//    @GET
-//    @Path("count/{hobby}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public String getCountByHobby(@PathParam("hobby") String hobby) {
-//        PersonDTO pDTO = FACADE.getPersonCountOnHobbies(hobby);
-//        return GSON.toJson(pDTO);
-//    }
+    @GET
+    @Path("count/{hobby}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getCountByHobby(@PathParam("hobby") String hobby) {
+        return GSON.toJson(FACADE.getAmountOfPersonsWithHobby(hobby));
+    }
 
 }

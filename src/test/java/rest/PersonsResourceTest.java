@@ -1,5 +1,6 @@
 package rest;
 
+import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 import io.restassured.RestAssured;
@@ -13,6 +14,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -31,6 +33,7 @@ public class PersonsResourceTest {
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Person p1, p2, p3;
+    private static Hobby hobby1;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -71,6 +74,7 @@ public class PersonsResourceTest {
         p2 = new Person("tobias@anker.boldtJ", "Tobias", "AnkerB-J");
         p3 = new Person("allan@bo.simonsen", "Allan", "Simonsen");
         Phone phone1 = new Phone("29384756", "Phone Number 1");
+        hobby1 = new Hobby("Gaming", "Wasting time in front of computer or TV");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -83,6 +87,9 @@ public class PersonsResourceTest {
             em.persist(p3);
             em.persist(phone1);
             p2.addPhone(phone1);
+            em.persist(hobby1);
+            p1.addHobby(hobby1);
+            p3.addHobby(hobby1);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -115,7 +122,7 @@ public class PersonsResourceTest {
                 .body("personsList.fName", containsInAnyOrder("Allan", "Tobias", "Caroline"))
                 .body("personsList.lName", containsInAnyOrder("Simonsen", "AnkerB-J", "HoegIversen"));
     }
-    
+
     @Test
     public void testGetPersonById() {
         given()
@@ -127,17 +134,35 @@ public class PersonsResourceTest {
                 .body("lName", equalTo("Simonsen"));
     }
 
-    
     @Test
     public void testGetPersonByPhone() {
         given()
                 .contentType("application/json")
                 .get("/persons/phone/" + p2.getPhoneNumbers().iterator().next()).then()
                 .assertThat()
-               // .statusCode(HttpStatus.OK_200.getStatusCode())
+                .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("fName", equalTo("Tobias"))
                 .body("lName", equalTo("AnkerB-J"));
     }
-    
-    
+
+    @Test
+    public void testGetAmountOfPersonsWithHobby() {
+        given()
+                .contentType("application/json")
+                .get("/persons/count/" + hobby1.getName()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(comparesEqualTo("2"));
+    }
+
+    @Test
+    public void testGetAmountOfPersonsWithHobby_ZERO() {
+        given()
+                .contentType("application/json")
+                .get("/persons/count/hulabula").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(comparesEqualTo("0"));
+    }
+
 }
