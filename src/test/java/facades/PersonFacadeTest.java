@@ -111,10 +111,15 @@ public class PersonFacadeTest {
         System.out.println("act " + actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
     }
-    
+    */
     @Test 
     public void testEditPerson() {
+        p1.setfName("John");
+        p1.addHobby(new Hobby("eating", "stuffing food in your face"));
+        PersonDTO pDTO = new PersonDTO(p1);
+        PersonDTO editPerson = facade.editPerson(pDTO);
+        System.out.println(editPerson);
     }
-    */
+    
 
 }

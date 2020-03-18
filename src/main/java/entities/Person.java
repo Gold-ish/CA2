@@ -54,6 +54,14 @@ public class Person implements Serializable {
         this.lName = lName;
     }
 
+    public Person(PersonDTO p) {
+        this.id = p.getId();
+        this.fName = p.getfName();
+        this.lName = p.getlName();
+        this.address = new Address(p.getStreet(), 
+                new CityInfo(p.getCity(), p.getZip()));
+    }
+
     public Long getId() {
         return id;
     }

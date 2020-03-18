@@ -96,8 +96,10 @@ public class PersonFacade {
     //TODO put person update person based on id
     public PersonDTO editPerson(PersonDTO p) {
         EntityManager em = getEntityManager();
+        Person person = new Person(p);
+        person.setPhones(makePhoneSet(p.getPhones()));
+        person.setHobbies(makeHobbyList(p.getHobbies()));
         try {
-            Person person = em.find(Person.class, p.getId());
             em.getTransaction().begin();
             em.merge(person);
             em.getTransaction().commit();
@@ -159,6 +161,14 @@ public class PersonFacade {
         Set<Phone> phones = new HashSet<>();
         String[] values = phonesStr.split(",");
         Set<String> strSet = new HashSet<>(Arrays.asList(values));
+        strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
+            phones.add(phone);
+        });
+        return phones;
+    }
+    
+    private Set<Phone> makePhoneSet(Set<String> strSet) {
+        Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
             phones.add(phone);
         });
