@@ -125,6 +125,15 @@ public class Person implements Serializable {
     public List<Hobby> getHobbies() {
         return hobbies;
     }
+    
+    public String getHobbiesString(){
+        StringBuilder sb  = new StringBuilder();
+        for (Hobby hobby : hobbies) {
+            sb.append(hobby.getName());
+            sb.append(", ");
+        }
+        return sb.toString().substring(0,sb.length()-3);
+    }
 
     public void setHobbies(List<Hobby> hobbies) {
         this.hobbies = hobbies;

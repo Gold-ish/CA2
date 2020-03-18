@@ -42,7 +42,7 @@ public class PersonDTO {
             this.city = p.getAddress().getCityInfo().getCity();
             this.zip = p.getAddress().getCityInfo().getZipCode();
         }
-        this.hobbies = p.getHobbies().toString();
+        this.hobbies = p.getHobbiesString();
         this.phones = p.getPhoneNumbers();
 
     }

@@ -6,13 +6,17 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasProperty;
-import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,21 +41,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-    @AfterAll
-    public static void tearDownClass() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
+//    @AfterAll
+//    public static void tearDownClass() {
+//        EntityManager em = emf.createEntityManager();
+//        try {
+//            em.getTransaction().begin();
+//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+//            em.getTransaction().commit();
+//        } finally {
+//            em.close();
+//        }
+//    }
 
     @BeforeEach
     public void setUp() {
@@ -132,7 +136,7 @@ public class PersonFacadeTest {
         assertThat(persons.getPersonsList(), everyItem(hasProperty("phones")));
     }
 
-    //@Test
+    @Test
     public void testgetPerson(){
         assertEquals(new PersonDTO(p1), facade.getPersonById(Math.toIntExact(p1.getId())));
     }
@@ -141,44 +145,30 @@ public class PersonFacadeTest {
     public void testgetPersonFail(){
         assertEquals(new PersonDTO(p1), facade.getPersonById(-1));
     }
-
-
-    /*
+    
     @Test
     public void testAddPerson() {
         //Make Person
-        Person p = new Person("jane@doe.com", "Jane", "Dow");
-        
+        Person p = new Person("jane@doe.com", "Jane", "Doe");
         //Make Address
         CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
         Address adr = new Address("West Street", cityInfo);
         p.setAddress(adr);
-        
         //Make Hobbies
         List<Hobby> hobbiesList = new ArrayList();
-        //List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
         hobbiesList.add(new Hobby("programming", ""));
         hobbiesList.add(new Hobby("dancing", ""));
-        hobbiesList.get(0).setId(1L);
-        hobbiesList.get(1).setId(2L);
-        //hobbiesList.get(0).setPersons(emptyPersonList);
-        //hobbiesList.get(1).setPersons(emptyPersonList);
         p.setHobbies(hobbiesList);
-        
         //Make Phone
         Set<Phone> phoneNumber = new HashSet();
         phoneNumber.add(new Phone("45638213", "Phone Description"));
         p.setPhones(phoneNumber);
         PersonDTO expectedPersonResult = new PersonDTO(p);
-        expectedPersonResult.setId(5L);
         PersonDTO actualAddPersonResult = facade.addPerson("Jane", "Doe", "jane@doe.com", "West Street", "Copenhagen", "1700", "programming, dancing", "45638213");
-        
-        //Der er noget underligt her i Hobby delen med Persons.. Kan ikke få testen til at mache outputtet.
-        System.out.println("exp " + expectedPersonResult);
-        System.out.println("act " + actualAddPersonResult);
+        //Test are not run syncronized, therfore we force the id to be the same.
+        expectedPersonResult.setId(actualAddPersonResult.getId());
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
     }
-     */
     
     //@Test
     public void testAddPersonMissingInput() {

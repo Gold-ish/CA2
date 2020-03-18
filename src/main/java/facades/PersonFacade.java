@@ -52,6 +52,7 @@ public class PersonFacade {
         EntityManager em = getEntityManager();
         try {
             Person p = em.find(Person.class, (long) id);
+            System.out.println(p);
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -111,9 +112,7 @@ public class PersonFacade {
             p.setAddress(adr);
             p.setHobbies(hobbiesList);
             p.setPhones(phonesSet);
-            System.out.println(p.getHobbies());
             em.getTransaction().commit();
-            System.out.println(p.getHobbies());
             return new PersonDTO(p);
         } finally {
             em.close();
