@@ -186,7 +186,7 @@ public class PersonFacade {
         }
     }
 
-    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
+    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby  
     public int getAmountOfPersonsWithHobby(String hobby) {
         EntityManager em = getEntityManager();
         try {
