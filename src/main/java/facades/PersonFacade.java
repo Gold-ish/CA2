@@ -134,6 +134,7 @@ public class PersonFacade {
             em.close();
         }
     }
+    
     //TODO Fejlhåndtering på getResultList.get(0)
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
@@ -178,7 +179,6 @@ public class PersonFacade {
         }
     }
 
-    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby  
     public int getAmountOfPersonsWithHobby(String hobby) {
         EntityManager em = getEntityManager();
         try {
