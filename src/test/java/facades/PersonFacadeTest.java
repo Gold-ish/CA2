@@ -76,41 +76,6 @@ public class PersonFacadeTest {
 //        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
     }
     
-//    @Test
-//    public void testAddPerson() {
-//        //Make Person
-//        Person p = new Person("email@test.com", "Jane", "Dow");
-//        //Make Address
-//        CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
-//        Address adr = new Address("West Street", cityInfo);
-//        p.setAddress(adr);
-//        //Make Hobbies
-//        List<Hobby> hobbiesList = new ArrayList<>();
-//        
-//        List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
-//        
-//        
-//        hobbiesList.add(new Hobby("programming", ""));
-//        hobbiesList.add(new Hobby("dancing", ""));
-//        hobbiesList.get(0).setId(1L);
-//        hobbiesList.get(1).setId(2L);
-//        hobbiesList.get(0).setPersons(emptyPersonList);
-//        hobbiesList.get(1).setPersons(emptyPersonList);
-//        p.setHobbies(hobbiesList);
-//        //Make Phone
-//        Set<Phone> phoneNumber = new HashSet();
-//        phoneNumber.add(new Phone("45638213", "Phone Description"));
-//        p.setPhones(phoneNumber);
-//        PersonDTO expectedPersonResult = new PersonDTO(p);
-//        expectedPersonResult.setId(5L);
-//        PersonDTO actualAddPersonResult = facade.addPerson("Jane", "Doe", "jane@doe.com", "West Street", "Copenhagen", "1700", "programming, dancing", "45638213");
-//        
-//        //Der er noget underligt her i Hobby delen med Persons.. Kan ikke få testen til at mache outputtet.
-//        System.out.println("exp " + expectedPersonResult);
-//        System.out.println("act " +actualAddPersonResult);
-//        assertTrue(expectedPersonResult.equals(actualAddPersonResult));
-//    }
-
     /*
     @Test
     public void testAddPerson() {
