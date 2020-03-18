@@ -62,23 +62,23 @@ public class PersonsResource {
         PersonDTO pDTO = FACADE.getPersonByPhone(phoneNo);
         return GSON.toJson(pDTO);
     }
-//
-//    @GET
-//    @Path("hobby/{hobby}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public String getPersonsByHobby(@PathParam("hobby") String hobby) {
-//        PersonDTO pDTO = FACADE.getPersonsByHobby(hobby);
-//        return GSON.toJson(pDTO);
-//    }
-//
-//    @GET
-//    @Path("city/{city}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public String getPersonsByCity(@PathParam("city") String city) {
-//        PersonDTO pDTO = FACADE.getPersonsByCity(city);
-//        return GSON.toJson(pDTO);
-//    }
-//
+
+    @GET
+    @Path("hobby/{hobby}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPersonsByHobby(@PathParam("hobby") String hobby) {
+        PersonsDTO psDTO = FACADE.getAllPersonsByHobby(hobby);
+        return GSON.toJson(psDTO);
+    }
+
+    @GET
+    @Path("city/{city}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPersonsByCity(@PathParam("city") String city) {
+        PersonsDTO psDTO = FACADE.getPersonsFromCity(city);
+        return GSON.toJson(psDTO);
+    }
+
     @GET
     @Path("count/{hobby}")
     @Produces(MediaType.APPLICATION_JSON)
