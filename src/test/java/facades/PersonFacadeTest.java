@@ -2,6 +2,8 @@ package facades;
 
 
 import dto.*;
+import entities.Address;
+import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import javax.persistence.EntityManager;
@@ -9,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasProperty;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,21 +35,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-//    @AfterAll
-//    public static void tearDownClass() {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            em.getTransaction().begin();
-//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-//            em.getTransaction().commit();
-//        } finally {
-//            em.close();
-//        }
-//    }
+    @AfterAll
+    public static void tearDownClass() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 
     @BeforeEach
     public void setUp() {
@@ -54,6 +57,14 @@ public class PersonFacadeTest {
         //Address a1 = new Address("AdresseTest", "AddresseDescription");
         p1 = new Person("Allan@HotMail.com", "ALLAH'N", "SIMONSEN");
         p2 = new Person("Alfred@Mail.com", "Alfred", "Johansen");
+        Hobby h1 = new Hobby("Programming", "testTest");
+        Hobby h2 = new Hobby("Programming", "testTest");
+        Address a1 = new Address("StreetName1", "AdditionalInfo");
+        Address a2 = new Address("StreetName2", "AdditionalInfo");
+        a1.setCityInfo(new CityInfo("CityName", "7862"));
+        a2.setCityInfo(new CityInfo("CityNameExtra", "52857862"));
+        p1.setAddress(a1);
+        p2.setAddress(a2);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -63,6 +74,8 @@ public class PersonFacadeTest {
             em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             em.persist(p1);
             em.persist(p2);
+            em.persist(h1);
+            em.persist(h2);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -82,22 +95,23 @@ public class PersonFacadeTest {
     public void testAddPerson() {
         //Make Person
         Person p = new Person("jane@doe.com", "Jane", "Dow");
+        
         //Make Address
         CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
         Address adr = new Address("West Street", cityInfo);
         p.setAddress(adr);
+        
         //Make Hobbies
         List<Hobby> hobbiesList = new ArrayList();
-
-        List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
-        
+        //List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
         hobbiesList.add(new Hobby("programming", ""));
         hobbiesList.add(new Hobby("dancing", ""));
         hobbiesList.get(0).setId(1L);
         hobbiesList.get(1).setId(2L);
         //hobbiesList.get(0).setPersons(emptyPersonList);
-       // hobbiesList.get(1).setPersons(emptyPersonList);
+        //hobbiesList.get(1).setPersons(emptyPersonList);
         p.setHobbies(hobbiesList);
+        
         //Make Phone
         Set<Phone> phoneNumber = new HashSet();
         phoneNumber.add(new Phone("45638213", "Phone Description"));
@@ -121,5 +135,11 @@ public class PersonFacadeTest {
         System.out.println(editPerson);
     }
     
-
+    @Test
+    public void testGetPersonsFromCity() {
+        System.out.println("getPersonsFromCity");
+        PersonsDTO persons = facade.getPersonsFromCity("CityName");
+        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+//        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
+    }
 }
