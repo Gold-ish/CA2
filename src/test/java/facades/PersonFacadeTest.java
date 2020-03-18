@@ -11,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasProperty;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,21 +35,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-//    @AfterAll
-//    public static void tearDownClass() {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            em.getTransaction().begin();
-//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-//            em.getTransaction().commit();
-//        } finally {
-//            em.close();
-//        }
-//    }
+    @AfterAll
+    public static void tearDownClass() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 
     @BeforeEach
     public void setUp() {
@@ -123,8 +124,17 @@ public class PersonFacadeTest {
         System.out.println("exp " + expectedPersonResult);
         System.out.println("act " + actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
-    }*/
-
+    }
+    */
+    @Test 
+    public void testEditPerson() {
+        p1.setfName("John");
+        p1.addHobby(new Hobby("eating", "stuffing food in your face"));
+        PersonDTO pDTO = new PersonDTO(p1);
+        PersonDTO editPerson = facade.editPerson(pDTO);
+        System.out.println(editPerson);
+    }
+    
     @Test
     public void testGetPersonsByHobby() {
         System.out.println("getAllPersonsByHobby");
