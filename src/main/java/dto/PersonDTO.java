@@ -114,15 +114,14 @@ public class PersonDTO {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.id);
-        hash = 47 * hash + Objects.hashCode(this.fName);
-        hash = 47 * hash + Objects.hashCode(this.lName);
-        hash = 47 * hash + Objects.hashCode(this.street);
-        hash = 47 * hash + Objects.hashCode(this.city);
-        hash = 47 * hash + Objects.hashCode(this.zip);
-        hash = 47 * hash + Objects.hashCode(this.hobbies);
-        hash = 47 * hash + Objects.hashCode(this.phones);
+        int hash = 5;
+        hash = 43 * hash + Objects.hashCode(this.fName);
+        hash = 43 * hash + Objects.hashCode(this.lName);
+        hash = 43 * hash + Objects.hashCode(this.street);
+        hash = 43 * hash + Objects.hashCode(this.city);
+        hash = 43 * hash + Objects.hashCode(this.zip);
+        hash = 43 * hash + Objects.hashCode(this.hobbies);
+        hash = 43 * hash + Objects.hashCode(this.phones);
         return hash;
     }
 
@@ -156,14 +155,13 @@ public class PersonDTO {
         if (!Objects.equals(this.hobbies, other.hobbies)) {
             return false;
         }
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
         if (!Objects.equals(this.phones, other.phones)) {
             return false;
         }
         return true;
     }
+
+    
 
     @Override
     public String toString() {

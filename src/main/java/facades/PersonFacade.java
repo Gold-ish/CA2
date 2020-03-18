@@ -84,7 +84,9 @@ public class PersonFacade {
             p.setAddress(adr);
             p.setHobbies(hobbiesList);
             p.setPhones(phonesSet);
+            System.out.println(p.getHobbies());
             em.getTransaction().commit();
+            System.out.println(p.getHobbies());
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -125,11 +127,13 @@ public class PersonFacade {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Query q = em.createQuery("SELECT person_id, hobby_id, NAME, COUNT(NAME) "
+            Query q = em.createNativeQuery("SELECT COUNT(*) "
+                    + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
                     + "FROM link_person_hobby "
                     + "JOIN HOBBY "
-                    + "ON link_person_hobby.hobby_id = HOBBY.ID "
-                    + "WHERE HOBBY.NAME = :hobbyName");
+                    + "ON link_person_hobby.hobby_id = HOBBY.id "
+                    + "WHERE HOBBY.name = :hobbyName) "
+                    + "AS returnValue;");
             q.setParameter("hobbyName", hobby);
             em.getTransaction().commit();
             System.out.println(q);
@@ -145,7 +149,7 @@ public class PersonFacade {
         List<Hobby> hobbies = new ArrayList<>();
         String[] values = hobbiesStr.split(",");
         List<String> strList = Arrays.asList(values);
-        strList.stream().map((hobbyName) -> new Hobby(hobbyName, "")).forEachOrdered((hobby) -> {
+        strList.stream().map((hobbyName) -> new Hobby(hobbyName.trim(), "")).forEachOrdered((hobby) -> {
             hobbies.add(hobby);
         });
         return hobbies;
@@ -155,7 +159,7 @@ public class PersonFacade {
         Set<Phone> phones = new HashSet<>();
         String[] values = phonesStr.split(",");
         Set<String> strSet = new HashSet<>(Arrays.asList(values));
-        strSet.stream().map((phoneNo) -> new Phone(phoneNo, "")).forEachOrdered((phone) -> {
+        strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
             phones.add(phone);
         });
         return phones;
