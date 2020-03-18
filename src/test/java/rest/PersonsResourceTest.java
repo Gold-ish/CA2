@@ -164,5 +164,15 @@ public class PersonsResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body(comparesEqualTo("0"));
     }
-
+    
+    @Test
+    public void testGetPersonsByHobby() {
+        given()
+                .contentType("application/json")
+                .get("/persons/hobby/" + hobby1.getPersons()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("personsList.fName", containsInAnyOrder("Allan", "Caroline"))
+                .body("personsList.lName", containsInAnyOrder("Simonsen", "HoegIversen"));
+    }
 }

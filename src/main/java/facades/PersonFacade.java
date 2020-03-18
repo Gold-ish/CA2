@@ -134,7 +134,19 @@ public class PersonFacade {
     }
 
     //TODO get JSON array of who have a certain hobby
-
+    public PersonsDTO getAllPersonsByHobby(String hobby) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
+                    + "JOIN p.hobby Hobby "
+                    + "WHERE Hobby.hobby = :hobby", Person.class);
+            q.setParameter("hobby", hobby);
+            return new PersonsDTO(q.getResultList());
+        } finally {
+            em.close();
+        }
+    }
+        
     //TODO get JSON array of persons who live in a certain city
 
     //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
@@ -151,7 +163,7 @@ public class PersonFacade {
 //                    + "AS returnValue;");
 //            q.setParameter("hobbyName", hobby);
 
-int rowCnt= Math.toIntExact((long)em.createNativeQuery("SELECT COUNT(*) "
+            int rowCnt = Math.toIntExact((long) em.createNativeQuery("SELECT COUNT(*) "
                     + "FROM (SELECT link_person_hobby.person_id, link_person_hobby.hobby_id, HOBBY.name "
                     + "FROM link_person_hobby "
                     + "JOIN HOBBY "
