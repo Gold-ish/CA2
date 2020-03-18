@@ -62,20 +62,44 @@ public class PersonFacade {
     public PersonDTO addPerson(String fName, String lName, String email, String street,
             String city, String zip, String hobbies, String phones) {
         EntityManager em = getEntityManager();
+        //Create Address
+        /*
+        Not working it should see if there allready is a address in the db that is the same and then reuse it.
+        Not create a duplicate entry of it.
+         */
         CityInfo cityInfo = new CityInfo(city, zip);
         Address adr = new Address(street, cityInfo);
+        /*Address checkAdr = checkAddress(adr, em);
+        if (checkAdr != null) {
+            adr = checkAdr;
+        }*/
+        //Create Hobby
+        /*
+        Not working it should see if there allready is a Hobby in the db that is the same and then reuse it.
+        Not create a duplicate entry of it.
+         */
         List<Hobby> hobbiesList = new ArrayList<>();
         if (hobbies != null) {
             hobbiesList = makeHobbyList(hobbies);
+            /*List<Hobby> checkHob = checkHobby(hobbiesList, em);
+            if (checkHob != null) {
+                hobbiesList = checkHob;
+            }*/
         }
+        //Create Phone
+        /*
+        If there allready is a phone with the same number then it shouldn't be able to add it again.
+        2 different people can't have the same phone number.
+         */
         Set<Phone> phonesSet = new HashSet<>();
         if (phones != null) {
             phonesSet = makePhoneSet(phones);
+            /*Set<Phone> checkPhn = checkPhone(phonesSet, em);
+            if (checkPhn != null) {
+                phonesSet = checkPhn;
+            }*/
         }
-//        Address check = checkAddress(adr, em);
-//        if (check != null) {
-//            adr = check;
-//        }
+        //Create Person
         Person p = new Person(email, fName, lName);
         phonesSet.forEach((phone) -> {
             phone.setPerson(p);
@@ -94,7 +118,7 @@ public class PersonFacade {
             em.close();
         }
     }
-    
+
     //TODO put person update person based on id
     /*
     public PersonDTO editPerson(PersonDTO p) {
@@ -148,6 +172,19 @@ public class PersonFacade {
     }
         
     //TODO get JSON array of persons who live in a certain city
+    public PersonsDTO getPersonsFromCity(String city) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
+                    + "JOIN p.address Address "
+                    + "JOIN address.cityInfo CityInfo "
+                    + "WHERE CityInfo.city = :city", Person.class);
+            q.setParameter("city", city);
+            return new PersonsDTO(q.getResultList());
+        } finally {
+            em.close();
+        }
+    }
 
     //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
     public int getAmountOfPersonsWithHobby(String hobby) {// Dunno if this will work - temp
@@ -179,8 +216,7 @@ public class PersonFacade {
         }
     }
 
-    
-    //Needs check for everything we cascade
+    //Helping methods
     private List<Hobby> makeHobbyList(String hobbiesStr) {
         List<Hobby> hobbies = new ArrayList<>();
         String[] values = hobbiesStr.split(",");
@@ -201,4 +237,51 @@ public class PersonFacade {
         return phones;
     }
 
+    //addCheck methods
+    /*
+    private Address checkAddress(Address adr, EntityManager em) {
+        try {
+            TypedQuery<Address> q = em.createQuery("SELECT a FROM Address a WHERE a.city = :city AND a.street = :street AND a.zip = :zip", Address.class);
+            q.setParameter("street", adr.getStreet());
+            q.setParameter("city", adr.getCityInfo().getCity());
+            q.setParameter("zip", adr.getCityInfo().getZipCode());
+            Address result = q.getSingleResult();
+            return result;
+        } catch (Exception e) {
+            //System.out.println(e);
+            return null;
+        }
+    }
+
+    private List<Hobby> checkHobby(List<Hobby> hobbiesList, EntityManager em) {
+        try {
+            List<Hobby> result = null;
+            for (Hobby hobby : hobbiesList) {
+                TypedQuery<Hobby> q = em.createQuery("SELECT a FROM Hobby a WHERE a.name = :name", Hobby.class);
+                q.setParameter("name", hobby.getName());
+                Hobby addToResult = q.getSingleResult();
+                result.add(addToResult);
+            }
+            return result;
+        } catch (Exception e) {
+            //System.out.println(e);
+            return null;
+        }
+    }
+
+    private Set<Phone> checkPhone(Set<Phone> phonesSet, EntityManager em) {
+        try {
+            Set<Phone> result = null;
+            for (Phone phone : phonesSet) {
+                TypedQuery<Phone> q = em.createQuery("SELECT a FROM Phone a WHERE a.number = :number", Phone.class);
+                q.setParameter("number", phone.getNumber());
+                Phone addToResult = q.getSingleResult();
+                result.add(addToResult);
+            }
+            return result;
+        } catch (Exception e) {
+            //System.out.println(e);
+            return null;
+        }
+    }*/
 }
