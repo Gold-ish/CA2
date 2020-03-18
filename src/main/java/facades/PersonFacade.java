@@ -73,6 +73,8 @@ public class PersonFacade {
         if (phones != null) {
             phonesSet = makePhoneSet(phones);
         }
+//      Needs check for everything we cascade
+//      Needs to check if the items allready exist, we don't want duplicates in the DB.
 //        Address check = checkAddress(adr, em);
 //        if (check != null) {
 //            adr = check;
@@ -156,9 +158,8 @@ public class PersonFacade {
             em.close();
         }
     }
-
     
-    //Needs check for everything we cascade
+    //Helping methods
     private List<Hobby> makeHobbyList(String hobbiesStr) {
         List<Hobby> hobbies = new ArrayList<>();
         String[] values = hobbiesStr.split(",");

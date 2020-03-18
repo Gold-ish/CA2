@@ -81,22 +81,23 @@ public class PersonFacadeTest {
     public void testAddPerson() {
         //Make Person
         Person p = new Person("jane@doe.com", "Jane", "Dow");
+        
         //Make Address
         CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
         Address adr = new Address("West Street", cityInfo);
         p.setAddress(adr);
+        
         //Make Hobbies
         List<Hobby> hobbiesList = new ArrayList();
-
-        List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
-        
+        //List<Person> emptyPersonList = new ArrayList();//Hacky hack method.. Almost works..
         hobbiesList.add(new Hobby("programming", ""));
         hobbiesList.add(new Hobby("dancing", ""));
         hobbiesList.get(0).setId(1L);
         hobbiesList.get(1).setId(2L);
         //hobbiesList.get(0).setPersons(emptyPersonList);
-       // hobbiesList.get(1).setPersons(emptyPersonList);
+        //hobbiesList.get(1).setPersons(emptyPersonList);
         p.setHobbies(hobbiesList);
+        
         //Make Phone
         Set<Phone> phoneNumber = new HashSet();
         phoneNumber.add(new Phone("45638213", "Phone Description"));
@@ -109,7 +110,6 @@ public class PersonFacadeTest {
         System.out.println("exp " + expectedPersonResult);
         System.out.println("act " + actualAddPersonResult);
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
-    }
-    */
+    }*/
 
 }
