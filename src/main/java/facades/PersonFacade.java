@@ -52,6 +52,7 @@ public class PersonFacade {
         EntityManager em = getEntityManager();
         try {
             Person p = em.find(Person.class, (long) id);
+            System.out.println(p);
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -99,6 +100,7 @@ public class PersonFacade {
                 phonesSet = checkPhn;
             }*/
         }
+
         //Create Person
         Person p = new Person(email, fName, lName);
         phonesSet.forEach((phone) -> {
@@ -110,9 +112,7 @@ public class PersonFacade {
             p.setAddress(adr);
             p.setHobbies(hobbiesList);
             p.setPhones(phonesSet);
-            System.out.println(p.getHobbies());
             em.getTransaction().commit();
-            System.out.println(p.getHobbies());
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -120,37 +120,29 @@ public class PersonFacade {
     }
 
     //TODO put person update person based on id
-    /*
     public PersonDTO editPerson(PersonDTO p) {
         EntityManager em = getEntityManager();
+        Person person = new Person(p);
+        person.setPhones(makePhoneSet(p.getPhones()));
+        person.setHobbies(makeHobbyList(p.getHobbies()));
         try {
-            Person person = em.find(Person.class, p.getId());
-            Address address = new Address(p.getStreet(), p.getZip(), p.getCity());
-            Address check = checkAddress(address, em);
-            if (check != null) {
-                address = check;
-            }
             em.getTransaction().begin();
-            person.setFirstName(p.getFirstName());
-            person.setLastName(p.getLastName());
-            person.setPhone(p.getPhone());
-            person.setLastEdited(new Date());
-            person.setAddress(address);
-            
+            em.merge(person);
             em.getTransaction().commit();
             return new PersonDTO(person);
         } finally {
             em.close();
         }
     }
-     */
     //TODO Fejlhåndtering på getResultList.get(0)
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
         EntityManager em = getEntityManager();
+        System.out.println(number);
         try {
             TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
             q.setParameter("number", number);
+            
             return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
@@ -186,7 +178,7 @@ public class PersonFacade {
         }
     }
 
-    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby
+    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby  
     public int getAmountOfPersonsWithHobby(String hobby) {
         EntityManager em = getEntityManager();
         try {
@@ -220,6 +212,14 @@ public class PersonFacade {
         Set<Phone> phones = new HashSet<>();
         String[] values = phonesStr.split(",");
         Set<String> strSet = new HashSet<>(Arrays.asList(values));
+        strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
+            phones.add(phone);
+        });
+        return phones;
+    }
+    
+    private Set<Phone> makePhoneSet(Set<String> strSet) {
+        Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
             phones.add(phone);
         });

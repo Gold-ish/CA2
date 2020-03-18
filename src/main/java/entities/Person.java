@@ -1,5 +1,6 @@
 package entities;
 
+import dto.PersonDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +52,14 @@ public class Person implements Serializable {
         this.email = email;
         this.fName = fName;
         this.lName = lName;
+    }
+
+    public Person(PersonDTO p) {
+        this.id = p.getId();
+        this.fName = p.getfName();
+        this.lName = p.getlName();
+        this.address = new Address(p.getStreet(), 
+                new CityInfo(p.getCity(), p.getZip()));
     }
 
     public Long getId() {
@@ -115,6 +124,15 @@ public class Person implements Serializable {
 
     public List<Hobby> getHobbies() {
         return hobbies;
+    }
+    
+    public String getHobbiesString(){
+        StringBuilder sb  = new StringBuilder();
+        for (Hobby hobby : hobbies) {
+            sb.append(hobby.getName());
+            sb.append(", ");
+        }
+        return sb.toString().substring(0,sb.length()-3);
     }
 
     public void setHobbies(List<Hobby> hobbies) {
