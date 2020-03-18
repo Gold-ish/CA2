@@ -136,6 +136,13 @@ public class PersonFacadeTest {
     }
     
     @Test
+    public void testGetPersonsByHobby() {
+        System.out.println("getAllPersonsByHobby");
+        PersonsDTO persons = facade.getAllPersonsByHobby("Programming");
+        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+    }
+    
+    @Test
     public void testGetPersonsFromCity() {
         System.out.println("getPersonsFromCity");
         PersonsDTO persons = facade.getPersonsFromCity("CityName");
