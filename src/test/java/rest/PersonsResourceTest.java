@@ -1,5 +1,7 @@
 package rest;
 
+import entities.Address;
+import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
@@ -33,7 +35,7 @@ public class PersonsResourceTest {
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Person p1, p2, p3;
-    private static Hobby hobby1;
+    private static Hobby hobby1, hobby2, hobby3, hobby4;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -74,7 +76,18 @@ public class PersonsResourceTest {
         p2 = new Person("tobias@anker.boldtJ", "Tobias", "AnkerB-J");
         p3 = new Person("allan@bo.simonsen", "Allan", "Simonsen");
         Phone phone1 = new Phone("29384756", "Phone Number 1");
+        Phone phone2 = new Phone("87654321", "Phone Number 2");
         hobby1 = new Hobby("Gaming", "Wasting time in front of computer or TV");
+        hobby2 = new Hobby("Swimming", "Getting wet");
+        hobby3 = new Hobby("Fishing", "Getting up early and doing nothing for 5 hours");
+        hobby4 = new Hobby("D&D", "Very nerdy game");
+        Address address1  = new Address("KagsåKollegiet", "Lejlighed");
+        Address address2  = new Address("Fredensbovej", "Hus");
+        Address address3  = new Address("Kattevej", "Lejlighed");
+        CityInfo city1 = new CityInfo("Solrød Strand", "2680");
+        CityInfo city2 = new CityInfo("Søborg", "2860");
+        CityInfo city3 = new CityInfo("Albertslund", "2620");
+        
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -85,11 +98,38 @@ public class PersonsResourceTest {
             em.persist(p1);
             em.persist(p2);
             em.persist(p3);
+            
+            //Phones
             em.persist(phone1);
+            em.persist(phone2);
             p2.addPhone(phone1);
+            p1.addPhone(phone2);
+            
             em.persist(hobby1);
-            p1.addHobby(hobby1);
+            em.persist(hobby2);
+            em.persist(hobby3);
+            em.persist(hobby4);
+            p2.addHobby(hobby1);
             p3.addHobby(hobby1);
+            p3.addHobby(hobby2);
+            p2.addHobby(hobby3);
+            p1.addHobby(hobby4);
+            
+            em.persist(address1);
+            em.persist(address2);
+            em.persist(address3);
+            p1.setAddress(address3);
+            p2.setAddress(address2);
+            p3.setAddress(address1);
+            
+            em.persist(city1);
+            em.persist(city2);
+            em.persist(city3);
+            city1.addAddress(address1);
+            city2.addAddress(address2);
+            city3.addAddress(address3);
+            
+            
             em.getTransaction().commit();
         } finally {
             em.close();

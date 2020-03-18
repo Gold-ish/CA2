@@ -70,6 +70,7 @@ public class CityInfo implements Serializable {
             addresses = new ArrayList<>();
         }
         addresses.add(address);
+        address.setCityInfo(this);
     }
 
     @Override
