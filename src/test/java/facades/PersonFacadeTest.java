@@ -2,6 +2,7 @@ package facades;
 
 
 import dto.*;
+import entities.Hobby;
 import entities.Person;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -53,6 +54,8 @@ public class PersonFacadeTest {
         //Address a1 = new Address("AdresseTest", "AddresseDescription");
         p1 = new Person("Allan@HotMail.com", "ALLAH'N", "SIMONSEN");
         p2 = new Person("Alfred@Mail.com", "Alfred", "Johansen");
+        Hobby h1 = new Hobby("Programming", "testTest");
+        Hobby h2 = new Hobby("Programming", "testTest");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
@@ -62,6 +65,8 @@ public class PersonFacadeTest {
             em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             em.persist(p1);
             em.persist(p2);
+            em.persist(h1);
+            em.persist(h2);
             em.getTransaction().commit();
         } finally {
             em.close();
