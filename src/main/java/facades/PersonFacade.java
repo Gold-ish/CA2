@@ -73,10 +73,7 @@ public class PersonFacade {
         if (phones != null) {
             phonesSet = makePhoneSet(phones);
         }
-//        Address check = checkAddress(adr, em);
-//        if (check != null) {
-//            adr = check;
-//        }
+        
         Person p = new Person(email, fName, lName);
         phonesSet.forEach((phone) -> {
             phone.setPerson(p);
@@ -95,30 +92,19 @@ public class PersonFacade {
     }
     
     //TODO put person update person based on id
-    /*
     public PersonDTO editPerson(PersonDTO p) {
         EntityManager em = getEntityManager();
         try {
             Person person = em.find(Person.class, p.getId());
-            Address address = new Address(p.getStreet(), p.getZip(), p.getCity());
-            Address check = checkAddress(address, em);
-            if (check != null) {
-                address = check;
-            }
             em.getTransaction().begin();
-            person.setFirstName(p.getFirstName());
-            person.setLastName(p.getLastName());
-            person.setPhone(p.getPhone());
-            person.setLastEdited(new Date());
-            person.setAddress(address);
-            
+            em.merge(person);
             em.getTransaction().commit();
             return new PersonDTO(person);
         } finally {
             em.close();
         }
     }
-     */
+     
     //TODO get person based on phone number
     public PersonDTO getPersonByPhone(String number) {
         EntityManager em = getEntityManager();

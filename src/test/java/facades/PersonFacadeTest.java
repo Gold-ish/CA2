@@ -2,6 +2,7 @@ package facades;
 
 
 import dto.*;
+import entities.Hobby;
 import entities.Person;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -36,7 +37,11 @@ public class PersonFacadeTest {
 //        EntityManager em = emf.createEntityManager();
 //        try {
 //            em.getTransaction().begin();
+//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
 //            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
 //            em.getTransaction().commit();
 //        } finally {
 //            em.close();
@@ -77,6 +82,10 @@ public class PersonFacadeTest {
         PersonDTO addPerson = facade.addPerson("Jane", "Doe", "jane@doe.com", "West Street", 
                 "Copenhagen", "1700", "programming, dancing", "45638213");
         
+    }
+    
+    @Test 
+    public void testEditPerson() {
     }
 
 }

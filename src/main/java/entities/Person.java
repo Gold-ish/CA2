@@ -1,5 +1,6 @@
 package entities;
 
+import dto.PersonDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
