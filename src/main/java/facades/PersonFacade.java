@@ -1,8 +1,10 @@
 package facades;
 
+import dto.CompletePersonDTO;
 import dto.PersonDTO;
 import dto.PersonsDTO;
 import entities.*;
+import exception.NoContentFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,11 +50,13 @@ public class PersonFacade {
         }
     }
 
-    public PersonDTO getPersonById(int id) {
+    public PersonDTO getPersonById(int id) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             Person p = em.find(Person.class, (long) id);
-            System.out.println(p);
+            if (p == null) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -60,32 +64,31 @@ public class PersonFacade {
     }
 
     //TODO post person without id <- Add new person
-    public PersonDTO addPerson(String fName, String lName, String email, String street,
-            String city, String zip, String hobbies, String phones) {
+    public PersonDTO addPerson(CompletePersonDTO completePerson) {
         EntityManager em = getEntityManager();
         //Create Address
         /*
         Not working it should see if there allready is a address in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
          */
-        CityInfo cityInfo = new CityInfo(city, zip);
-        Address adr = new Address(street, cityInfo);
-        /*Address checkAdr = checkAddress(adr, em);
+        CityInfo cityInfo = new CityInfo(completePerson.getCity(), completePerson.getZip());
+        Address adr = new Address(completePerson.getStreet(), cityInfo);
+        Address checkAdr = checkAddress(adr, em);
         if (checkAdr != null) {
             adr = checkAdr;
-        }*/
+        }
         //Create Hobby
         /*
         Not working it should see if there allready is a Hobby in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
          */
         List<Hobby> hobbiesList = new ArrayList<>();
-        if (hobbies != null) {
-            hobbiesList = makeHobbyList(hobbies);
-            /*List<Hobby> checkHob = checkHobby(hobbiesList, em);
+        if (completePerson.getHobbyName() != null) {
+            hobbiesList = makeHobbyList(completePerson.getHobbyName());
+            List<Hobby> checkHob = checkHobby(hobbiesList, em);
             if (checkHob != null) {
                 hobbiesList = checkHob;
-            }*/
+            }
         }
         //Create Phone
         /*
@@ -93,16 +96,16 @@ public class PersonFacade {
         2 different people can't have the same phone number.
          */
         Set<Phone> phonesSet = new HashSet<>();
-        if (phones != null) {
-            phonesSet = makePhoneSet(phones);
-            /*Set<Phone> checkPhn = checkPhone(phonesSet, em);
+        if (completePerson.getPhoneNumber() != null) {
+            phonesSet = makePhoneSet(completePerson.getPhoneNumber());
+            Set<Phone> checkPhn = checkPhone(phonesSet, em);
             if (checkPhn != null) {
                 phonesSet = checkPhn;
-            }*/
+            }
         }
 
         //Create Person
-        Person p = new Person(email, fName, lName);
+        Person p = new Person(completePerson.getEmail(), completePerson.getfName(), completePerson.getlName());
         phonesSet.forEach((phone) -> {
             phone.setPerson(p);
         });
@@ -134,16 +137,16 @@ public class PersonFacade {
             em.close();
         }
     }
-    
-    //TODO Fejlhåndtering på getResultList.get(0)
-    //TODO get person based on phone number
-    public PersonDTO getPersonByPhone(String number) {
+
+    public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         System.out.println(number);
         try {
             TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
             q.setParameter("number", number);
-            
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
@@ -151,21 +154,24 @@ public class PersonFacade {
     }
 
     //TODO get JSON array of who have a certain hobby
-    public PersonsDTO getAllPersonsByHobby(String hobby) {
+    public PersonsDTO getAllPersonsByHobby(String hobby) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
                     + "INNER JOIN p.hobbies Hobby "
                     + "WHERE Hobby.name = :hobby", Person.class);
             q.setParameter("hobby", hobby);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
         }
     }
-        
+
     //TODO get JSON array of persons who live in a certain city
-    public PersonsDTO getPersonsFromCity(String city) {
+    public PersonsDTO getPersonsFromCity(String city) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
@@ -173,6 +179,9 @@ public class PersonFacade {
                     + "JOIN address.cityInfo CityInfo "
                     + "WHERE CityInfo.city = :city", Person.class);
             q.setParameter("city", city);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
@@ -217,7 +226,7 @@ public class PersonFacade {
         });
         return phones;
     }
-    
+
     private Set<Phone> makePhoneSet(Set<String> strSet) {
         Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
@@ -227,7 +236,7 @@ public class PersonFacade {
     }
 
     //addCheck methods
-    /*
+    
     private Address checkAddress(Address adr, EntityManager em) {
         try {
             TypedQuery<Address> q = em.createQuery("SELECT a FROM Address a WHERE a.city = :city AND a.street = :street AND a.zip = :zip", Address.class);
@@ -272,5 +281,5 @@ public class PersonFacade {
             //System.out.println(e);
             return null;
         }
-    }*/
+    }
 }

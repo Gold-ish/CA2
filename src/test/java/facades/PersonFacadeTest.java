@@ -6,6 +6,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import exception.NoContentFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
@@ -116,7 +118,10 @@ public class PersonFacadeTest {
             city1.addAddress(address1);
             city2.addAddress(address2);
             city3.addAddress(address3);
-
+            
+            em.persist(new Hobby("Sjlep sjlep", "zzzZZZzzzZZZ"));
+            em.persist(new Hobby("Fishing", "Getting up early and doing nothing for 5 hours"));
+            
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -131,22 +136,36 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testgetPersonById() {
+    public void testgetPersonById() throws NoContentFoundException {
+        System.out.println("getPersonByID");
         assertEquals(new PersonDTO(p1), facade.getPersonById(Math.toIntExact(p1.getId())));
     }
 
     //assertfailure with exception
+    @Test
     public void testgetPersonByIdFail() {
-        assertEquals(new PersonDTO(p1), facade.getPersonById(-1));
+        System.out.println("getPersonByIDFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getPersonById(0);
+        });
     }
 
     @Test
     public void testAddPerson() {
+        //Person Data
+        String fName = "Jane";
+        String lName = "Doe";
+        String eMail = "jane@doe.com";
+        String city = "Copenhagen";
+        String zip = "1700";
+        String street = "West Street";
+        String hobbyNames = "programming, dancing";
+        String phoneNumber = "45638213";
         //Make Person
-        Person p = new Person("jane@doe.com", "Jane", "Doe");
+        Person p = new Person(eMail, fName, lName);
         //Make Address
-        CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
-        Address adr = new Address("West Street", cityInfo);
+        CityInfo cityInfo = new CityInfo(city, zip);
+        Address adr = new Address(street, cityInfo);
         p.setAddress(adr);
         //Make Hobbies
         List<Hobby> hobbiesList = new ArrayList();
@@ -154,11 +173,20 @@ public class PersonFacadeTest {
         hobbiesList.add(new Hobby("dancing", ""));
         p.setHobbies(hobbiesList);
         //Make Phone
-        Set<Phone> phoneNumber = new HashSet();
-        phoneNumber.add(new Phone("45638213", "Phone Description"));
-        p.setPhones(phoneNumber);
+        Set<Phone> phoneNumbers = new HashSet();
+        phoneNumbers.add(new Phone(phoneNumber, "Phone Description"));
+        p.setPhones(phoneNumbers);
         PersonDTO expectedPersonResult = new PersonDTO(p);
-        PersonDTO actualAddPersonResult = facade.addPerson("Jane", "Doe", "jane@doe.com", "West Street", "Copenhagen", "1700", "programming, dancing", "45638213");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setfName(fName);
+        cpDTO.setlName(lName);
+        cpDTO.setEmail(eMail);
+        cpDTO.setStreet(street);
+        cpDTO.setCity(city);
+        cpDTO.setZip(zip);
+        cpDTO.setHobbyName(hobbyNames);
+        cpDTO.setPhoneNumber(phoneNumber);
+        PersonDTO actualAddPersonResult = facade.addPerson(cpDTO);
         //Test are not run syncronized, therfore we force the id to be the same.
         expectedPersonResult.setId(actualAddPersonResult.getId());
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
@@ -189,37 +217,51 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testGetPersonByPhone() {
+    public void testGetPersonByPhone() throws NoContentFoundException {
         System.out.println("GetPersonByPhone");
         PersonDTO person = facade.getPersonByPhone(p1.getPhoneNumbers().iterator().next());
         assertEquals(new PersonDTO(p1), person);
     }
 
-    //@Test expect error
+    //expect error
+    @Test
     public void testGetPersonByPhoneFail() {
-
+        System.out.println("GetPersonByPhoneFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getPersonByPhone("00000000");
+        });
     }
 
     @Test
-    public void testGetPersonsByHobby() {
+    public void testGetPersonsByHobby() throws NoContentFoundException {
         System.out.println("getAllPersonsByHobby");
         PersonsDTO ActualPersons = facade.getAllPersonsByHobby("Gaming");
         assertEquals(2, ActualPersons.getPersonsList().size());
     }
 
-    //@Test expect error
+    // expect error
+    @Test
     public void testGetPersonsByHobbyFail() {
+        System.out.println("GetPersonsByHobbyFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getAllPersonsByHobby("hullabulla");
+        });
     }
 
     @Test
-    public void testGetPersonsFromCity() {
+    public void testGetPersonsFromCity() throws NoContentFoundException {
         System.out.println("getPersonsFromCity");
         PersonsDTO persons = facade.getPersonsFromCity(city3.getCity());
         assertEquals(1, persons.getPersonsList().size());
     }
 
-    //@Test expect error
+    //expect error
+    @Test
     public void testGetPersonsFromCityFail() {
+        System.out.println("getPersonsFromCityFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getPersonsFromCity("Langbortistan");
+        });
     }
 
     @Test
