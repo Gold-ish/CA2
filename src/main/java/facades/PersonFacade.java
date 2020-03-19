@@ -5,6 +5,7 @@ import dto.PersonDTO;
 import dto.PersonsDTO;
 import entities.*;
 import exception.NoContentFoundException;
+import exception.WrongPersonFormatException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,8 +65,9 @@ public class PersonFacade {
     }
 
     //TODO post person without id <- Add new person
-    public PersonDTO addPerson(CompletePersonDTO completePerson) {
+    public PersonDTO addPerson(CompletePersonDTO completePerson) throws WrongPersonFormatException {
         EntityManager em = getEntityManager();
+        checkIfComplete(completePerson);
         //Create Address
         CityInfo cityInfo = new CityInfo(completePerson.getCity(), completePerson.getZip());
         Address adr = new Address(completePerson.getStreet(), completePerson.getadditionalAddressInfo(), cityInfo);
@@ -83,12 +85,12 @@ public class PersonFacade {
         //Create Phone
         Set<Phone> phonesSet = new HashSet<>();
         if (completePerson.getPhoneNumber() != null) {
+//TODO Addtest
             phonesSet = makePhoneSet(completePerson.getPhoneNumber());
             phonesSet.iterator().next().setDescription(completePerson.getPhoneDescription());
             Set<Phone> checkPhn = checkPhone(phonesSet, em);
-            if(checkPhn.iterator().next().getId() != null){
-                //Then the phone allready exists
-                //Throw error here - Because there allready exists a phone in the DB with the same number.
+            if (checkPhn.iterator().next().getId() != null) {
+                throw new WrongPersonFormatException("Phone number allready in use");
             } else {
                 phonesSet = checkPhn;
             }
@@ -127,7 +129,6 @@ public class PersonFacade {
             em.close();
         }
     }*/
-
     public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
@@ -196,10 +197,13 @@ public class PersonFacade {
     }
 
     //Helping methods
-    private List<Hobby> makeHobbyList(String hobbiesNames, String hobbieDescriptions) {
+    private List<Hobby> makeHobbyList(String hobbiesNames, String hobbieDescriptions) throws WrongPersonFormatException {
         List<Hobby> hobbies = new ArrayList<>();
         String[] names = hobbiesNames.split(",");
         String[] descriptions = hobbieDescriptions.split(",");
+        if(names.length != descriptions.length){ 
+            throw new WrongPersonFormatException("Hobbies and hobbie descriptions aren't the same length");
+        }
         for (int i = 0; i < descriptions.length; i++) {
             hobbies.add(new Hobby(names[i].trim(), descriptions[i].trim()));
         }
@@ -245,7 +249,7 @@ public class PersonFacade {
                 TypedQuery<Hobby> q = em.createQuery("SELECT a FROM Hobby a WHERE a.name = :name", Hobby.class);
                 q.setParameter("name", hobby.getName());
                 Hobby addToResult = new Hobby();
-                if(q.getResultList().isEmpty()){
+                if (q.getResultList().isEmpty()) {
                     addToResult = hobby;
                 } else {
                     addToResult = q.getSingleResult();
@@ -266,7 +270,7 @@ public class PersonFacade {
                 TypedQuery<Phone> q = em.createQuery("SELECT a FROM Phone a WHERE a.number = :number", Phone.class);
                 q.setParameter("number", phone.getNumber());
                 Phone addToResult = new Phone();
-                if(q.getResultList().isEmpty()){
+                if (q.getResultList().isEmpty()) {
                     addToResult = phone;
                 } else {
                     addToResult = q.getSingleResult();
@@ -277,6 +281,32 @@ public class PersonFacade {
         } catch (Exception e) {
             //System.out.println(e);
             return null;
+        }
+    }
+
+    private void checkIfComplete(CompletePersonDTO completePerson) throws WrongPersonFormatException {
+        if (completePerson.getEmail() == null || completePerson.getEmail().isBlank()) {
+            throw new WrongPersonFormatException("Field E-mail is required");
+        } else if (completePerson.getHobbyDescription() == null || completePerson.getHobbyDescription().isBlank()) {
+            throw new WrongPersonFormatException("Field Hobby description is required");
+        } else if (completePerson.getHobbyName() == null || completePerson.getHobbyName().isBlank()) {
+            throw new WrongPersonFormatException("Field Hobby name is required");
+        } else if (completePerson.getPhoneDescription() == null || completePerson.getPhoneDescription().isBlank()) {
+            throw new WrongPersonFormatException("Field Phone description is required");
+        } else if (completePerson.getPhoneNumber() == null || completePerson.getPhoneNumber().isBlank()) {
+            throw new WrongPersonFormatException("Field Phone number is required");
+        } else if (completePerson.getStreet() == null || completePerson.getStreet().isBlank()) {
+            throw new WrongPersonFormatException("Field Street is required");
+        } else if (completePerson.getZip() == null || completePerson.getZip().isBlank()) {
+            throw new WrongPersonFormatException("Field Zip is required");
+        } else if (completePerson.getadditionalAddressInfo() == null || completePerson.getadditionalAddressInfo().isBlank()) {
+            throw new WrongPersonFormatException("Field Additional address info is required");
+        } else if (completePerson.getfName() == null || completePerson.getfName().isBlank()) {
+            throw new WrongPersonFormatException("Field First name is required");
+        } else if (completePerson.getlName() == null || completePerson.getlName().isBlank()) {
+            throw new WrongPersonFormatException("Field Last name is required");
+        } else if(completePerson.getCity() == null || completePerson.getCity().isBlank()){
+            throw new WrongPersonFormatException("Field City is required");
         }
     }
 }

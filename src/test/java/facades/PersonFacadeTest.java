@@ -7,12 +7,14 @@ import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 import exception.NoContentFoundException;
+import exception.WrongPersonFormatException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,22 +44,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-//    @AfterAll
-//    public static void tearDownClass() {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            em.getTransaction().begin();
-//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-//            em.getTransaction().commit();
-//        } finally {
-//            em.close();
-//        }
-//    }
-
+    @AfterAll
+    public static void tearDownClass() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
@@ -117,7 +118,7 @@ public class PersonFacadeTest {
             city1.addAddress(address1);
             city2.addAddress(address2);
             city3.addAddress(address3);
-            
+
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -147,7 +148,7 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testAddPerson() {
+    public void testAddPerson() throws WrongPersonFormatException {
         //Person Data
         String fName = "Jane";
         String lName = "Doe";
@@ -183,20 +184,63 @@ public class PersonFacadeTest {
         cpDTO.setHobbyName(hobbyNames);
         cpDTO.setHobbyDescription("abc, def");
         cpDTO.setPhoneNumber(phoneNumber);
+        cpDTO.setPhoneDescription("Phone description");
+        cpDTO.setadditionalAddressInfo("additional Address info");
         PersonDTO actualAddPersonResult = facade.addPerson(cpDTO);
         //Test are not run syncronized, therfore we force the id to be the same.
         expectedPersonResult.setId(actualAddPersonResult.getId());
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
     }
 
-    //@Test
+    @Test
     public void testAddPersonMissingInput() {
-
+        System.out.println("AddPersonMissingInput");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setfName("FirstName");
+        cpDTO.setlName("LastName");
+        Assertions.assertThrows(WrongPersonFormatException.class, () -> {
+            facade.addPerson(cpDTO);
+        });
     }
 
-    //@Test
-    public void testAddPersonMissingInput2() {
+    @Test
+    public void testAddPersonWrongHobbyInput() {
+        System.out.println("testAddPersonWrongHobbyInput");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setfName("FirstName");
+        cpDTO.setlName("LastName");
+        cpDTO.setCity("city");
+        cpDTO.setEmail("mail");
+        cpDTO.setHobbyName("hby1, hby2");
+        cpDTO.setHobbyDescription("desc1");
+        cpDTO.setPhoneNumber("752");
+        cpDTO.setPhoneDescription("description");
+        cpDTO.setStreet("street");
+        cpDTO.setZip("zip");
+        cpDTO.setadditionalAddressInfo("additional info");
+        Assertions.assertThrows(WrongPersonFormatException.class, () -> {
+            facade.addPerson(cpDTO);
+        });
+    }
 
+    @Test
+    public void testAddPersonExistingPhone() {
+        System.out.println("testAddPersonExistingPhone");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setfName("FirstName");
+        cpDTO.setlName("LastName");
+        cpDTO.setCity("city");
+        cpDTO.setEmail("mail");
+        cpDTO.setHobbyName("hby1, hby2");
+        cpDTO.setHobbyDescription("desc1, desc2");
+        cpDTO.setPhoneNumber("29384756");//Allready exists in setup
+        cpDTO.setPhoneDescription("description");
+        cpDTO.setStreet("street");
+        cpDTO.setZip("zip");
+        cpDTO.setadditionalAddressInfo("additional info");
+        Assertions.assertThrows(WrongPersonFormatException.class, () -> {
+            facade.addPerson(cpDTO);
+        });
     }
 
     /*@Test
@@ -207,7 +251,6 @@ public class PersonFacadeTest {
         PersonDTO editPerson = facade.editPerson(pDTO);
         System.out.println(editPerson);
     }*/
-
     //@Test
     public void testEditPersonWrongID() {
 

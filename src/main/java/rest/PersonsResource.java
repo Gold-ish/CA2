@@ -6,6 +6,7 @@ import dto.CompletePersonDTO;
 import dto.PersonDTO;
 import dto.PersonsDTO;
 import exception.NoContentFoundException;
+import exception.WrongPersonFormatException;
 import facades.PersonFacade;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -44,7 +45,7 @@ public class PersonsResource {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public String addPerson(String person) {
+    public String addPerson(String person) throws WrongPersonFormatException {
         PersonDTO pCon = FACADE.addPerson(GSON.fromJson(person, CompletePersonDTO.class));
         return GSON.toJson(pCon);
     }
