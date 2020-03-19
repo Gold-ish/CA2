@@ -118,7 +118,10 @@ public class PersonFacadeTest {
             city1.addAddress(address1);
             city2.addAddress(address2);
             city3.addAddress(address3);
-
+            
+            em.persist(new Hobby("Sjlep sjlep", "zzzZZZzzzZZZ"));
+            em.persist(new Hobby("Fishing", "Getting up early and doing nothing for 5 hours"));
+            
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -149,11 +152,20 @@ public class PersonFacadeTest {
 
     @Test
     public void testAddPerson() {
+        //Person Data
+        String fName = "Jane";
+        String lName = "Doe";
+        String eMail = "jane@doe.com";
+        String city = "Copenhagen";
+        String zip = "1700";
+        String street = "West Street";
+        String hobbyNames = "programming, dancing";
+        String phoneNumber = "45638213";
         //Make Person
-        Person p = new Person("jane@doe.com", "Jane", "Doe");
+        Person p = new Person(eMail, fName, lName);
         //Make Address
-        CityInfo cityInfo = new CityInfo("Copenhagen", "1700");
-        Address adr = new Address("West Street", cityInfo);
+        CityInfo cityInfo = new CityInfo(city, zip);
+        Address adr = new Address(street, cityInfo);
         p.setAddress(adr);
         //Make Hobbies
         List<Hobby> hobbiesList = new ArrayList();
@@ -161,11 +173,20 @@ public class PersonFacadeTest {
         hobbiesList.add(new Hobby("dancing", ""));
         p.setHobbies(hobbiesList);
         //Make Phone
-        Set<Phone> phoneNumber = new HashSet();
-        phoneNumber.add(new Phone("45638213", "Phone Description"));
-        p.setPhones(phoneNumber);
+        Set<Phone> phoneNumbers = new HashSet();
+        phoneNumbers.add(new Phone(phoneNumber, "Phone Description"));
+        p.setPhones(phoneNumbers);
         PersonDTO expectedPersonResult = new PersonDTO(p);
-        PersonDTO actualAddPersonResult = facade.addPerson("Jane", "Doe", "jane@doe.com", "West Street", "Copenhagen", "1700", "programming, dancing", "45638213");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setfName(fName);
+        cpDTO.setlName(lName);
+        cpDTO.setEmail(eMail);
+        cpDTO.setStreet(street);
+        cpDTO.setCity(city);
+        cpDTO.setZip(zip);
+        cpDTO.setHobbyName(hobbyNames);
+        cpDTO.setPhoneNumber(phoneNumber);
+        PersonDTO actualAddPersonResult = facade.addPerson(cpDTO);
         //Test are not run syncronized, therfore we force the id to be the same.
         expectedPersonResult.setId(actualAddPersonResult.getId());
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
