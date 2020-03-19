@@ -1,5 +1,6 @@
 package facades;
 
+import dto.CompletePersonDTO;
 import dto.PersonDTO;
 import dto.PersonsDTO;
 import entities.*;
@@ -60,16 +61,15 @@ public class PersonFacade {
     }
 
     //TODO post person without id <- Add new person
-    public PersonDTO addPerson(String fName, String lName, String email, String street,
-            String city, String zip, String hobbies, String phones) {
+    public PersonDTO addPerson(CompletePersonDTO completePerson) {
         EntityManager em = getEntityManager();
         //Create Address
         /*
         Not working it should see if there allready is a address in the db that is the same and then reuse it.
         Not create a duplicate entry of it.
          */
-        CityInfo cityInfo = new CityInfo(city, zip);
-        Address adr = new Address(street, cityInfo);
+        CityInfo cityInfo = new CityInfo(completePerson.getCity(), completePerson.getZip());
+        Address adr = new Address(completePerson.getStreet(), cityInfo);
         Address checkAdr = checkAddress(adr, em);
         if (checkAdr != null) {
             adr = checkAdr;
@@ -80,8 +80,8 @@ public class PersonFacade {
         Not create a duplicate entry of it.
          */
         List<Hobby> hobbiesList = new ArrayList<>();
-        if (hobbies != null) {
-            hobbiesList = makeHobbyList(hobbies);
+        if (completePerson.getHobbyName() != null) {
+            hobbiesList = makeHobbyList(completePerson.getHobbyName());
             List<Hobby> checkHob = checkHobby(hobbiesList, em);
             if (checkHob != null) {
                 hobbiesList = checkHob;
@@ -93,8 +93,8 @@ public class PersonFacade {
         2 different people can't have the same phone number.
          */
         Set<Phone> phonesSet = new HashSet<>();
-        if (phones != null) {
-            phonesSet = makePhoneSet(phones);
+        if (completePerson.getPhoneNumber() != null) {
+            phonesSet = makePhoneSet(completePerson.getPhoneNumber());
             Set<Phone> checkPhn = checkPhone(phonesSet, em);
             if (checkPhn != null) {
                 phonesSet = checkPhn;
@@ -102,7 +102,7 @@ public class PersonFacade {
         }
 
         //Create Person
-        Person p = new Person(email, fName, lName);
+        Person p = new Person(completePerson.getEmail(), completePerson.getfName(), completePerson.getlName());
         phonesSet.forEach((phone) -> {
             phone.setPerson(p);
         });
