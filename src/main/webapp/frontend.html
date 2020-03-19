@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="styling.css">
+
+    </head>
+    <body>
+        <button id="backBtn">Back to mainpage</button>
+
+        <div class="container">
+            <h2>POST, PUT, GETaLL, GET</h2>
+            <!-- Trigger the modal with a button -->
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">POST</button>
+
+            <!-- Modal POST -->
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Create Person</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>First name: </p>
+                            <input id="inputFName">
+                            <p>Last name: </p>
+                            <input id="inputLName">
+                            <p>E-mail: </p>
+                            <input id="inputEmail">
+                            <p>Street: </p>
+                            <input id="inputStreet">
+                            <p>Additional Info: </p>
+                            <input id="inputAdditionalInfo">
+                            <p>City: </p>
+                            <input id="inputCity">
+                            <p>Zip: </p>
+                            <input id="inputZip">
+                            <p>Hobby: </p>
+                            <input id="inputHobby">
+                            <p>Hobby Description: </p>
+                            <input id="inputHobbyDescription">
+                            <p>Phone Number: </p>
+                            <input id="inputPhoneNumber">
+                            <p>Phone Description: </p>
+                            <input id="inputPhoneDescription">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Add Person</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Modal PUT-->
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Create Person</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>First name: </p>
+                            <input id="inputFName">
+                            <p>Last name: </p>
+                            <input id="inputLName">
+                            <p>Street: </p>
+                            <input id="inputStreet">
+                            <p>City: </p>
+                            <input id="inputCity">
+                            <p>Zip: </p>
+                            <input id="inputZip">
+                            <p>Hobbies: </p>
+                            <input id="inputHobby">
+                            <p>Phone Numbers: </p>
+                            <input id="inputPhoneNumber">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Edit Person</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>

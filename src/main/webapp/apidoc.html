@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>API Documentation</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -36,14 +36,14 @@
                 <tr>
                     <td><b>POST</b></td>
                     <td>/api/persons</td>
-                    <td>person (1) without id</td>
+                    <td>person (2)</td>
                     <td>person (1)</td>
                     <td>(e2)</td>
                 </tr>
                 <tr>
                     <td><b>PUT</b></td>
                     <td>/api/persons/{id}</td>
-                    <td>person (1)</td>
+                    <td>person (2)</td>
                     <td>person (1)</td>
                     <td>(e1)</td>
                 </tr>
@@ -78,17 +78,32 @@
             </tbody>
         </table>
         <h3>Request Body and Response Formats</h3>
-        <p><b>(1) Person format (don’t provide ID, for POST)</b> <br>
+        <p><b>(1) Person format</b> <br>
+            { <br>
+            "id": Number, <br>
+            "firstName": String, <br>
+            "lastName": String, <br>
+            "street": String, <br>
+            "city": String, <br>
+            "zip": String, <br>
+            "hobbies": String, <br>
+            "phoneNo": ListString <br>
+            } <br>
+        </p>
+        <p><b>(2) Person format (don’t provide ID, for POST)</b> <br>
             { <br>
             "id": Number, <br>
             "firstName": String, <br>
             "lastName": String, <br>
             "email": String (email), <br>
-            "phoneNo": ListString, <br>
             "street": String, <br>
+            "additionalInfo": String, <br>
             "city": String, <br>
             "zip": String, <br>
-            "hobbies": ListString <br>
+            "hobbyName": String, <br>
+            "hobbyDescription": String, <br>
+            "phoneNumber": String, <br>
+            "phoneDescription": String <br>
             } <br>
         </p>
         <h3>Errors</h3>
