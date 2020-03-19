@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.hasProperty;
+import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +28,8 @@ public class PersonFacadeTest {
     private static PersonFacade facade;
     private static Person p1, p2, p3;
     private static Hobby hobby1, hobby2, hobby3, hobby4;
+    private static CityInfo city1, city2, city3;
+    private static Phone phone1, phone2;
 
     public PersonFacadeTest() {
     }
@@ -41,21 +41,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-//    @AfterAll
-//    public static void tearDownClass() {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            em.getTransaction().begin();
-//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-//            em.getTransaction().commit();
-//        } finally {
-//            em.close();
-//        }
-//    }
+    @AfterAll
+    public static void tearDownClass() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 
     @BeforeEach
     public void setUp() {
@@ -63,8 +63,8 @@ public class PersonFacadeTest {
         p1 = new Person("carol@hoeg.iversen", "Caroline", "HoegIversen");
         p2 = new Person("tobias@anker.boldtJ", "Tobias", "AnkerB-J");
         p3 = new Person("allan@bo.simonsen", "Allan", "Simonsen");
-        Phone phone1 = new Phone("29384756", "Phone Number 1");
-        Phone phone2 = new Phone("87654321", "Phone Number 2");
+        phone1 = new Phone("29384756", "Phone Number 1");
+        phone2 = new Phone("87654321", "Phone Number 2");
         hobby1 = new Hobby("Gaming", "Wasting time in front of computer or TV");
         hobby2 = new Hobby("Swimming", "Getting wet");
         hobby3 = new Hobby("Fishing", "Getting up early and doing nothing for 5 hours");
@@ -72,9 +72,9 @@ public class PersonFacadeTest {
         Address address1 = new Address("KagsåKollegiet", "Lejlighed");
         Address address2 = new Address("Fredensbovej", "Hus");
         Address address3 = new Address("Kattevej", "Lejlighed");
-        CityInfo city1 = new CityInfo("Solrød Strand", "2680");
-        CityInfo city2 = new CityInfo("Søborg", "2860");
-        CityInfo city3 = new CityInfo("Albertslund", "2620");
+        city1 = new CityInfo("Solrød Strand", "2680");
+        city2 = new CityInfo("Søborg", "2860");
+        city3 = new CityInfo("Albertslund", "2620");
 
         try {
             em.getTransaction().begin();
@@ -122,30 +122,24 @@ public class PersonFacadeTest {
             em.close();
         }
     }
-    
+
     @Test
     public void testGetAllPersons() {
         System.out.println("getAllPersons");
         PersonsDTO persons = facade.getAllPersons();
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("lName")));
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("street")));
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("city")));
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("zip")));
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("hobbies")));
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("phones")));
+        assertEquals(3, persons.getPersonsList().size());
     }
 
     @Test
-    public void testgetPerson(){
+    public void testgetPersonById() {
         assertEquals(new PersonDTO(p1), facade.getPersonById(Math.toIntExact(p1.getId())));
     }
-    
+
     //assertfailure with exception
-    public void testgetPersonFail(){
+    public void testgetPersonByIdFail() {
         assertEquals(new PersonDTO(p1), facade.getPersonById(-1));
     }
-    
+
     @Test
     public void testAddPerson() {
         //Make Person
@@ -169,18 +163,17 @@ public class PersonFacadeTest {
         expectedPersonResult.setId(actualAddPersonResult.getId());
         assertTrue(expectedPersonResult.equals(actualAddPersonResult));
     }
-    
+
     //@Test
     public void testAddPersonMissingInput() {
-        
+
     }
-    
+
     //@Test
     public void testAddPersonMissingInput2() {
-        
+
     }
-    
-    
+
     @Test
     public void testEditPerson() {
         p1.setfName("John");
@@ -189,58 +182,59 @@ public class PersonFacadeTest {
         PersonDTO editPerson = facade.editPerson(pDTO);
         System.out.println(editPerson);
     }
-    
+
     //@Test
     public void testEditPersonWrongID() {
-        
+
     }
 
-//    @Test
-//    public void testGetPersonByPhone() {
-//        System.out.println("GetPersonByPhone");
-//        PersonDTO person = facade.getPersonByPhone(p1.getPhoneNumbers().iterator().next());
-//        assertEquals(new PersonDTO(p1), person);
-//    }
-    
-    
-    //@Test
-    public void testGetPersonByPhoneFail() {
+    @Test
+    public void testGetPersonByPhone() {
+        System.out.println("GetPersonByPhone");
+        PersonDTO person = facade.getPersonByPhone(p1.getPhoneNumbers().iterator().next());
+        assertEquals(new PersonDTO(p1), person);
     }
-            
-    //@Test
+
+    //@Test expect error
+    public void testGetPersonByPhoneFail() {
+
+    }
+
+    @Test
     public void testGetPersonsByHobby() {
         System.out.println("getAllPersonsByHobby");
-        PersonsDTO persons = facade.getAllPersonsByHobby("Programming");
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+        PersonsDTO ActualPersons = facade.getAllPersonsByHobby("Gaming");
+        assertEquals(2, ActualPersons.getPersonsList().size());
     }
-    
-    //@Test
+
+    //@Test expect error
     public void testGetPersonsByHobbyFail() {
     }
 
-    //@Test
+    @Test
     public void testGetPersonsFromCity() {
         System.out.println("getPersonsFromCity");
-        PersonsDTO persons = facade.getPersonsFromCity("CityName");
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
-//        assertTrue(persons.getPersonsList().contains(new PersonDTO(p1)));
+        PersonsDTO persons = facade.getPersonsFromCity(city3.getCity());
+        assertEquals(1, persons.getPersonsList().size());
     }
-    
-    //@Test
+
+    //@Test expect error
     public void testGetPersonsFromCityFail() {
     }
-    
-    //@Test
+
+    @Test
     public void testGetPersonCountWithHobby() {
         System.out.println("getAllPersonsByHobby");
-        PersonsDTO persons = facade.getAllPersonsByHobby("Programming");
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+        assertEquals(1, facade.getAmountOfPersonsWithHobby("Swimming"));
+        assertEquals(1, facade.getAmountOfPersonsWithHobby("Fishing"));
+        assertEquals(1, facade.getAmountOfPersonsWithHobby("D&D"));
+        assertEquals(2, facade.getAmountOfPersonsWithHobby("Gaming"));
     }
-    
-    //@Test
-    public void testGetPersonCountWithHobbyFail() {
+
+    @Test
+    public void testGetPersonCountWithHobbyZero() {
         System.out.println("getAllPersonsByHobby");
-        PersonsDTO persons = facade.getAllPersonsByHobby("Programming");
-        assertThat(persons.getPersonsList(), everyItem(hasProperty("fName")));
+        assertEquals(0, facade.getAmountOfPersonsWithHobby("HullaBulla"));
+        assertEquals(0, facade.getAmountOfPersonsWithHobby("DuErDenBedste"));
     }
 }

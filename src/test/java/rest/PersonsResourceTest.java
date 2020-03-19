@@ -146,6 +146,7 @@ public class PersonsResourceTest {
         given().when().get("/persons").then().statusCode(200);
     }
 
+    //GET
     @Test
     public void testGetAllPersons() {
         given()
@@ -156,6 +157,7 @@ public class PersonsResourceTest {
                 .body("personsList", hasSize(3));
     }
 
+    //GET
     @Test
     public void testPersonsListContains() throws Exception {
         given()
@@ -167,6 +169,7 @@ public class PersonsResourceTest {
                 .body("personsList.lName", containsInAnyOrder("Simonsen", "AnkerB-J", "HoegIversen"));
     }
 
+    //GET
     @Test
     public void testGetPersonById() {
         given()
@@ -178,6 +181,43 @@ public class PersonsResourceTest {
                 .body("lName", equalTo("Simonsen"));
     }
 
+    //GET
+    //@Test
+    public void testGetPersonByIdFail() {
+        given()
+                .contentType("application/json")
+                .get("/persons/" + 0).then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", equalTo(404))
+                .body("message", equalTo("No content found for this request"));
+    }
+
+    //POST
+    //@Test
+    public void testAddPerson() {
+
+    }
+
+    //POST
+    //@Test
+    public void testAddPersonFail() {
+
+    }
+
+    //PUT
+    //@Test
+    public void testEditPerson() {
+
+    }
+
+    //PUT
+    //@Test
+    public void testEditPersonFail() {
+
+    }
+
+    //GET
     @Test
     public void testGetPersonByPhone() {
         given()
@@ -187,6 +227,48 @@ public class PersonsResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("fName", equalTo("Tobias"))
                 .body("lName", equalTo("AnkerB-J"));
+    }
+
+    //GET
+    //@Test
+    public void testGetPersonByPhoneFail() {
+
+    }
+
+    //GET
+    //@Test
+    public void testGetPersonsByHobby() {
+        given()
+                .contentType("application/json")
+                .get("/persons/hobby/" + hobby1.getName()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("personsList.fName", containsInAnyOrder("Allan", "Tobias"))
+                .body("personsList.lName", containsInAnyOrder("Simonsen", "AnkerB-J"));
+    }
+
+    //GET
+    //@Test
+    public void testGetPersonsByHobbyFail() {
+
+    }
+
+    //GET
+    @Test
+    public void testGetPersonsByCity() {
+        given()
+                .contentType("application/json")
+                .get("/persons/city/" + city3.getCity()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("personsList.fName", containsInAnyOrder("Caroline"))
+                .body("personsList.lName", containsInAnyOrder("HoegIversen"));
+    }
+
+    //GET
+    //@Test
+    public void testGetPersonsByCityFail() {
+
     }
 
     @Test
@@ -207,28 +289,6 @@ public class PersonsResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body(comparesEqualTo("0"));
-    }
-
-    @Test
-    public void testGetPersonsByHobby() {
-        given()
-                .contentType("application/json")
-                .get("/persons/hobby/" + hobby1.getName()).then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("personsList.fName", containsInAnyOrder("Allan", "Tobias"))
-                .body("personsList.lName", containsInAnyOrder("Simonsen", "AnkerB-J"));
-    }
-
-    @Test
-    public void testGetPersonsByCity() {
-        given()
-                .contentType("application/json")
-                .get("/persons/city/" + city3.getCity()).then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("personsList.fName", containsInAnyOrder("Caroline"))
-                .body("personsList.lName", containsInAnyOrder("HoegIversen"));
     }
 
 }

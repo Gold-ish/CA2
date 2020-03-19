@@ -132,7 +132,7 @@ public class Person implements Serializable {
             sb.append(hobby.getName());
             sb.append(", ");
         }
-        return sb.toString().substring(0,sb.length()-3);
+        return sb.toString().substring(0,sb.length()-2);
     }
 
     public void setHobbies(List<Hobby> hobbies) {
