@@ -70,10 +70,10 @@ public class PersonFacade {
          */
         CityInfo cityInfo = new CityInfo(city, zip);
         Address adr = new Address(street, cityInfo);
-        /*Address checkAdr = checkAddress(adr, em);
+        Address checkAdr = checkAddress(adr, em);
         if (checkAdr != null) {
             adr = checkAdr;
-        }*/
+        }
         //Create Hobby
         /*
         Not working it should see if there allready is a Hobby in the db that is the same and then reuse it.
@@ -82,10 +82,10 @@ public class PersonFacade {
         List<Hobby> hobbiesList = new ArrayList<>();
         if (hobbies != null) {
             hobbiesList = makeHobbyList(hobbies);
-            /*List<Hobby> checkHob = checkHobby(hobbiesList, em);
+            List<Hobby> checkHob = checkHobby(hobbiesList, em);
             if (checkHob != null) {
                 hobbiesList = checkHob;
-            }*/
+            }
         }
         //Create Phone
         /*
@@ -95,10 +95,10 @@ public class PersonFacade {
         Set<Phone> phonesSet = new HashSet<>();
         if (phones != null) {
             phonesSet = makePhoneSet(phones);
-            /*Set<Phone> checkPhn = checkPhone(phonesSet, em);
+            Set<Phone> checkPhn = checkPhone(phonesSet, em);
             if (checkPhn != null) {
                 phonesSet = checkPhn;
-            }*/
+            }
         }
 
         //Create Person
@@ -227,7 +227,7 @@ public class PersonFacade {
     }
 
     //addCheck methods
-    /*
+    
     private Address checkAddress(Address adr, EntityManager em) {
         try {
             TypedQuery<Address> q = em.createQuery("SELECT a FROM Address a WHERE a.city = :city AND a.street = :street AND a.zip = :zip", Address.class);
@@ -272,5 +272,5 @@ public class PersonFacade {
             //System.out.println(e);
             return null;
         }
-    }*/
+    }
 }

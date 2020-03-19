@@ -116,7 +116,10 @@ public class PersonFacadeTest {
             city1.addAddress(address1);
             city2.addAddress(address2);
             city3.addAddress(address3);
-
+            
+            em.persist(new Hobby("Sjlep sjlep", "zzzZZZzzzZZZ"));
+            em.persist(new Hobby("Fishing", "Getting up early and doing nothing for 5 hours"));
+            
             em.getTransaction().commit();
         } finally {
             em.close();
