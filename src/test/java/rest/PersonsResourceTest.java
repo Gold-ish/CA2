@@ -122,17 +122,17 @@ public class PersonsResourceTest {
             em.persist(address1);
             em.persist(address2);
             em.persist(address3);
-//            p1.setAddress(address3);
-//            p2.setAddress(address2);
-//            p3.setAddress(address1);
+            p1.setAddress(address3);
+            p2.setAddress(address2);
+            p3.setAddress(address1);
 
             //City
-//            em.persist(city1);
-//            em.persist(city2);
-//            em.persist(city3);
-//            city1.addAddress(address1);
-//            city2.addAddress(address2);
-//            city3.addAddress(address3);
+            em.persist(city1);
+            em.persist(city2);
+            em.persist(city3);
+            city1.addAddress(address1);
+            city2.addAddress(address2);
+            city3.addAddress(address3);
 
             em.getTransaction().commit();
         } finally {
@@ -162,7 +162,7 @@ public class PersonsResourceTest {
                 .contentType("application/json")
                 .get("/persons").then()
                 .assertThat()
-                //.statusCode(HttpStatus.OK_200.getStatusCode())
+                .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("personsList.fName", containsInAnyOrder("Allan", "Tobias", "Caroline"))
                 .body("personsList.lName", containsInAnyOrder("Simonsen", "AnkerB-J", "HoegIversen"));
     }
@@ -227,8 +227,8 @@ public class PersonsResourceTest {
                 .get("/persons/city/" + city3.getCity()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("personsList.fName", equalTo("Caroline"))
-                .body("personsList.lName", equalTo("HoegIversen"));
+                .body("personsList.fName", containsInAnyOrder("Caroline"))
+                .body("personsList.lName", containsInAnyOrder("HoegIversen"));
     }
 
 }
