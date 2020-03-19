@@ -1,103 +1,132 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>API Documentation</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     </head>
 
     <body>
-        <h1>API Documentation</h1>
-        <table border="1" cellpadding="10">
-            <thead>
-                <tr>
-                    <th><b>Method</b></th>
-                    <th><b>URL</b></th>
-                    <th><b>Request Body (JSON)</b></th>
-                    <th><b>Response (JSON)</b></th>
-                    <th><b>Error (e)</b></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><b>GET</b></td>
-                    <td>/api/persons</td>
-                    <td></td>
-                    <td>[person, person, ...](1)</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><b>GET</b></td>
-                    <td>/api/persons/{id}</td>
-                    <td></td>
-                    <td>person (1)</td>
-                    <td>(e1)</td>
-                </tr>
-                <tr>
-                    <td><b>POST</b></td>
-                    <td>/api/persons</td>
-                    <td>person (1) without id</td>
-                    <td>person (1)</td>
-                    <td>(e2)</td>
-                </tr>
-                <tr>
-                    <td><b>PUT</b></td>
-                    <td>/api/persons/{id}</td>
-                    <td>person (1)</td>
-                    <td>person (1)</td>
-                    <td>(e1)</td>
-                </tr>
-                <tr>
-                    <td><b>GET</b></td>
-                    <td>/api/persons/phone/{phoneNo}</td>
-                    <td></td>
-                    <td>person (1)</td>
-                    <td>(e1)</td>
-                </tr>
-                <tr>
-                    <td><b>GET</b></td>
-                    <td>/api/persons/hobby/{hobby}</td>
-                    <td></td>
-                    <td>[person, person, ...](1)</td>
-                    <td>(e1)</td>
-                </tr>
-                <tr>
-                    <td><b>GET</b></td>
-                    <td>/api/persons/city/{city}</td>
-                    <td></td>
-                    <td>[person, person, ...](1)</td>
-                    <td>(e1)</td>
-                </tr>
-                <tr>
-                    <td><b>GET</b></td>
-                    <td>/api/persons/count/{hobby}</td>
-                    <td></td>
-                    <td>Number</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-        <h3>Request Body and Response Formats</h3>
-        <p><b>(1) Person format (don’t provide ID, for POST)</b> <br>
-            { <br>
-            "id": Number, <br>
-            "firstName": String, <br>
-            "lastName": String, <br>
-            "email": String (email), <br>
-            "phoneNo": ListString, <br>
-            "street": String, <br>
-            "city": String, <br>
-            "zip": String, <br>
-            "hobbies": ListString <br>
-            } <br>
-        </p>
-        <h3>Errors</h3>
-        <p><b>(e) All errors are reported using this format (with the HTTP-status code matching the number)</b> <br>
-            { status : statusCode, "msg": "Explains the problem" } 
-        </p>
-        <ul>
-            <li>(e1) :{ status : 404, "msg": "No content found for this request" }</li>
-            <li>(e2) :{ status : 400, "msg": "Field ‘xxx’ is required" } (for example, no name provided)</li>
-        </ul>
+        <div style="margin:20px;">
+            <button onclick="goBack()" class="btn btn-outline-secondary">Go Back</button> <br><br>
+
+            <h1>API Documentation</h1>
+            <table border="1" cellpadding="10">
+                <thead>
+                    <tr>
+                        <th><b>Method</b></th>
+                        <th><b>URL</b></th>
+                        <th><b>Request Body (JSON)</b></th>
+                        <th><b>Response (JSON)</b></th>
+                        <th><b>Error (e)</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>GET</b></td>
+                        <td>/api/persons</td>
+                        <td></td>
+                        <td>[person, person, ...](1)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>GET</b></td>
+                        <td>/api/persons/{id}</td>
+                        <td></td>
+                        <td>person (1)</td>
+                        <td>(e1)</td>
+                    </tr>
+                    <tr>
+                        <td><b>POST</b></td>
+                        <td>/api/persons</td>
+                        <td>person (2)</td>
+                        <td>person (1)</td>
+                        <td>(e2)</td>
+                    </tr>
+                    <tr>
+                        <td><b>PUT</b></td>
+                        <td>/api/persons/{id}</td>
+                        <td>person (2)</td>
+                        <td>person (1)</td>
+                        <td>(e1)</td>
+                    </tr>
+                    <tr>
+                        <td><b>GET</b></td>
+                        <td>/api/persons/phone/{phoneNo}</td>
+                        <td></td>
+                        <td>person (1)</td>
+                        <td>(e1)</td>
+                    </tr>
+                    <tr>
+                        <td><b>GET</b></td>
+                        <td>/api/persons/hobby/{hobby}</td>
+                        <td></td>
+                        <td>[person, person, ...](1)</td>
+                        <td>(e1)</td>
+                    </tr>
+                    <tr>
+                        <td><b>GET</b></td>
+                        <td>/api/persons/city/{city}</td>
+                        <td></td>
+                        <td>[person, person, ...](1)</td>
+                        <td>(e1)</td>
+                    </tr>
+                    <tr>
+                        <td><b>GET</b></td>
+                        <td>/api/persons/count/{hobby}</td>
+                        <td></td>
+                        <td>Number</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br><br>
+            <h3>Request Body and Response Formats</h3>
+            <p><b>(1) Person format</b> </p>
+            <ul style="list-style-type: none;">
+                <li> { </li>
+                <li> "id": Number, </li>
+                <li> "firstName": String, </li>
+                <li> "lastName": String, </li>
+                <li> "street": String, </li>
+                <li> "city": String, </li>
+                <li> "zip": String, </li>
+                <li> "hobbies": String, </li>
+                <li> "phoneNo": ListString </li>
+                <li> } </li>
+            </ul>
+            <p><b>(2) Person format (don’t provide ID, for POST)</b> </p>
+            <ul style="list-style-type: none;">
+                <li> { </li>
+                <li> "id": Number, </li>
+                <li> "firstName": String, </li>
+                <li> "lastName": String, </li>
+                <li> "email": String (email), </li>
+                <li> "street": String, </li>
+                <li> "additionalInfo": String, </li>
+                <li> "city": String, </li>
+                <li> "zip": String, </li>
+                <li> "hobbyName": String, </li>
+                <li> "hobbyDescription": String, </li>
+                <li> "phoneNumber": String, </li>
+                <li> "phoneDescription": String </li>
+                <li> } </li>
+            </ul>
+            <h3>Errors</h3>
+            <p><b>(e) All errors are reported using this format (with the HTTP-status code matching the number)</b> <br>
+                { status : statusCode, "msg": "Explains the problem" } 
+            </p>
+            <ul>
+                <li>(e1) :{ status : 404, "msg": "No content found for this request" }</li>
+                <li>(e2) :{ status : 400, "msg": "Field ‘xxx’ is required" } (for example, no name provided)</li>
+            </ul>
+        </div>
+
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        </script>
     </body>
 </html>

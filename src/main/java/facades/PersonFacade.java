@@ -4,6 +4,7 @@ import dto.CompletePersonDTO;
 import dto.PersonDTO;
 import dto.PersonsDTO;
 import entities.*;
+import exception.NoContentFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,10 +50,13 @@ public class PersonFacade {
         }
     }
 
-    public PersonDTO getPersonById(int id) {
+    public PersonDTO getPersonById(int id) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             Person p = em.find(Person.class, (long) id);
+            if (p == null) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -123,15 +127,15 @@ public class PersonFacade {
             em.close();
         }
     }*/
-    
-    //TODO Fejlhåndtering på getResultList.get(0)
-    //TODO get person based on phone number
-    public PersonDTO getPersonByPhone(String number) {
+
+    public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
             q.setParameter("number", number);
-            
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
@@ -139,21 +143,24 @@ public class PersonFacade {
     }
 
     //TODO get JSON array of who have a certain hobby
-    public PersonsDTO getAllPersonsByHobby(String hobby) {
+    public PersonsDTO getAllPersonsByHobby(String hobby) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
                     + "INNER JOIN p.hobbies Hobby "
                     + "WHERE Hobby.name = :hobby", Person.class);
             q.setParameter("hobby", hobby);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
         }
     }
-        
+
     //TODO get JSON array of persons who live in a certain city
-    public PersonsDTO getPersonsFromCity(String city) {
+    public PersonsDTO getPersonsFromCity(String city) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
@@ -161,6 +168,9 @@ public class PersonFacade {
                     + "JOIN address.cityInfo CityInfo "
                     + "WHERE CityInfo.city = :city", Person.class);
             q.setParameter("city", city);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
@@ -205,7 +215,7 @@ public class PersonFacade {
         });
         return phones;
     }
-    
+
     private Set<Phone> makePhoneSet(Set<String> strSet) {
         Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
