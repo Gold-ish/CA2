@@ -182,7 +182,7 @@ public class PersonsResourceTest {
     }
 
     //GET
-    //@Test
+    @Test
     public void testGetPersonByIdFail() {
         given()
                 .contentType("application/json")
@@ -230,13 +230,19 @@ public class PersonsResourceTest {
     }
 
     //GET
-    //@Test
+    @Test
     public void testGetPersonByPhoneFail() {
-
+        given()
+                .contentType("application/json")
+                .get("/persons/phone/" + 00000000).then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", equalTo(404))
+                .body("message", equalTo("No content found for this request"));
     }
 
     //GET
-    //@Test
+    @Test
     public void testGetPersonsByHobby() {
         given()
                 .contentType("application/json")
@@ -248,9 +254,15 @@ public class PersonsResourceTest {
     }
 
     //GET
-    //@Test
+    @Test
     public void testGetPersonsByHobbyFail() {
-
+        given()
+                .contentType("application/json")
+                .get("/persons/hobby/HULLABULLA").then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", equalTo(404))
+                .body("message", equalTo("No content found for this request"));
     }
 
     //GET
@@ -266,9 +278,15 @@ public class PersonsResourceTest {
     }
 
     //GET
-    //@Test
+    @Test
     public void testGetPersonsByCityFail() {
-
+        given()
+                .contentType("application/json")
+                .get("/persons/city/Langbortistan").then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", equalTo(404))
+                .body("message", equalTo("No content found for this request"));
     }
 
     @Test

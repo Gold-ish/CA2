@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.PersonDTO;
 import dto.PersonsDTO;
+import exception.NoContentFoundException;
 import facades.PersonFacade;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
@@ -32,7 +33,7 @@ public class PersonsResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getPersonById(@PathParam("id") int id) {
+    public String getPersonById(@PathParam("id") int id) throws NoContentFoundException{
         PersonDTO pDTO = FACADE.getPersonById(id);
         return GSON.toJson(pDTO);
     }
@@ -58,7 +59,7 @@ public class PersonsResource {
     @GET
     @Path("phone/{phoneNo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getPersonByPhoneNo(@PathParam("phoneNo") String phoneNo) {
+    public String getPersonByPhoneNo(@PathParam("phoneNo") String phoneNo) throws NoContentFoundException{
         PersonDTO pDTO = FACADE.getPersonByPhone(phoneNo);
         return GSON.toJson(pDTO);
     }
@@ -66,7 +67,7 @@ public class PersonsResource {
     @GET
     @Path("hobby/{hobby}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getPersonsByHobby(@PathParam("hobby") String hobby) {
+    public String getPersonsByHobby(@PathParam("hobby") String hobby) throws NoContentFoundException{
         PersonsDTO psDTO = FACADE.getAllPersonsByHobby(hobby);
         return GSON.toJson(psDTO);
     }
@@ -74,7 +75,7 @@ public class PersonsResource {
     @GET
     @Path("city/{city}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getPersonsByCity(@PathParam("city") String city) {
+    public String getPersonsByCity(@PathParam("city") String city) throws NoContentFoundException{
         PersonsDTO psDTO = FACADE.getPersonsFromCity(city);
         return GSON.toJson(psDTO);
     }

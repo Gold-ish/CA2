@@ -6,6 +6,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import exception.NoContentFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
@@ -131,13 +133,18 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testgetPersonById() {
+    public void testgetPersonById() throws NoContentFoundException {
+        System.out.println("getPersonByID");
         assertEquals(new PersonDTO(p1), facade.getPersonById(Math.toIntExact(p1.getId())));
     }
 
     //assertfailure with exception
+    @Test
     public void testgetPersonByIdFail() {
-        assertEquals(new PersonDTO(p1), facade.getPersonById(-1));
+        System.out.println("getPersonByIDFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getPersonById(0);
+        });
     }
 
     @Test
@@ -189,37 +196,51 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testGetPersonByPhone() {
+    public void testGetPersonByPhone() throws NoContentFoundException {
         System.out.println("GetPersonByPhone");
         PersonDTO person = facade.getPersonByPhone(p1.getPhoneNumbers().iterator().next());
         assertEquals(new PersonDTO(p1), person);
     }
 
-    //@Test expect error
+    //expect error
+    @Test
     public void testGetPersonByPhoneFail() {
-
+        System.out.println("GetPersonByPhoneFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getPersonByPhone("00000000");
+        });
     }
 
     @Test
-    public void testGetPersonsByHobby() {
+    public void testGetPersonsByHobby() throws NoContentFoundException {
         System.out.println("getAllPersonsByHobby");
         PersonsDTO ActualPersons = facade.getAllPersonsByHobby("Gaming");
         assertEquals(2, ActualPersons.getPersonsList().size());
     }
 
-    //@Test expect error
+    // expect error
+    @Test
     public void testGetPersonsByHobbyFail() {
+        System.out.println("GetPersonsByHobbyFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getAllPersonsByHobby("hullabulla");
+        });
     }
 
     @Test
-    public void testGetPersonsFromCity() {
+    public void testGetPersonsFromCity() throws NoContentFoundException {
         System.out.println("getPersonsFromCity");
         PersonsDTO persons = facade.getPersonsFromCity(city3.getCity());
         assertEquals(1, persons.getPersonsList().size());
     }
 
-    //@Test expect error
+    //expect error
+    @Test
     public void testGetPersonsFromCityFail() {
+        System.out.println("getPersonsFromCityFail");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.getPersonsFromCity("Langbortistan");
+        });
     }
 
     @Test
