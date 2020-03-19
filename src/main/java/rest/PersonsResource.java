@@ -2,11 +2,14 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.CompletePersonDTO;
 import dto.PersonDTO;
 import dto.PersonsDTO;
 import facades.PersonFacade;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -36,15 +39,18 @@ public class PersonsResource {
         PersonDTO pDTO = FACADE.getPersonById(id);
         return GSON.toJson(pDTO);
     }
-//
-//    @POST
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    @Produces({MediaType.APPLICATION_JSON})
-//    public String addPerson(String person) {
-//        PersonDTO pCon = FACADE.addPerson(GSON.fromJson(person, PersonDTO.class));
-//        return GSON.toJson(pCon);
-//    }
 
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public String addPerson(String person) {
+        PersonDTO pCon = FACADE.addPerson(GSON.fromJson(person, CompletePersonDTO.class));
+        return GSON.toJson(pCon);
+    }
+    
+    
+    
+    
 //    @PUT
 //    @Path("/{id}")
 //    @Consumes(MediaType.APPLICATION_JSON)

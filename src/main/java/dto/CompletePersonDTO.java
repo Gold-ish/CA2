@@ -13,7 +13,7 @@ public class CompletePersonDTO {
     private String lName;
     //Address
     private String street;
-    private String additionalInfo;
+    private String additionalAddressInfo;
     //City
     private String city;
     private String zip;
@@ -69,12 +69,12 @@ public class CompletePersonDTO {
         this.street = street;
     }
 
-    public String getAdditionalInfo() {
-        return additionalInfo;
+    public String getadditionalAddressInfo() {
+        return additionalAddressInfo;
     }
 
-    public void setAdditionalInfo(String additionalInfo) {
-        this.additionalInfo = additionalInfo;
+    public void setadditionalAddressInfo(String additionalAddressInfo) {
+        this.additionalAddressInfo = additionalAddressInfo;
     }
 
     public String getCity() {
@@ -124,5 +124,7 @@ public class CompletePersonDTO {
     public void setPhoneDescription(String phoneDescription) {
         this.phoneDescription = phoneDescription;
     }    
+    
+    
     
 }
