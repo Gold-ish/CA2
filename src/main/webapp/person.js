@@ -63,6 +63,10 @@ function editPerson() {
     let inputZip = document.getElementById("inputZipPUT").value;
     let inputHobbies = document.getElementById("inputHobbyPUT").value;
     let inputPhones = document.getElementById("inputPhoneNumberPUT").value;
+    let inputEmail = document.getElementById("inputEmailPUT").value;
+    let inputaInfo = document.getElementById("inputaInfoPUT").value;
+    let inputHobbyDesc = document.getElementById("inputHobbyDescPUT").value;
+    let inputPhoneDesc = document.getElementById("inputPhoneDescPUT").value;
     let options = {
         method: "PUT",
         headers: {
@@ -72,11 +76,15 @@ function editPerson() {
         body: JSON.stringify({
             fName: inputfName,
             lName: inputlName,
+            email: inputEmail,
             street: inputStreet,
+            additionalAddressInfo: inputaInfo,
             city: inputCity,
             zip: inputZip,
-            hobbies: inputHobbies,
-            phone: inputPhones
+            hobbyName: inputHobbies,
+            hobbyDescription: inputHobbyDesc,
+            phoneNumber: inputPhones,
+            phoneDescription: inputPhoneDesc
         })
     };
 
@@ -177,4 +185,15 @@ function createTableFromData(element) {
     return "<table class='table table-hover'>" + tableHead + htmlRows + "</table>";
 }
 
+
+document.getElementById("editBtn").onclick = checkIdInput;
+
+function checkIdInput() {
+    document.getElementById("output").style = "color: black";
+    let id = document.getElementById("inputIdPUT").value;
+    if (id === "") {
+        document.getElementById("putError").innerHTML = "Id must be provided!!";
+        document.getElementById("putError").style = "color: red";
+    }
+}
 
