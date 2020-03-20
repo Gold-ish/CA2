@@ -114,22 +114,82 @@ public class PersonFacade {
         }
     }
 
-    /*
     //TODO put person update person based on id
-    public PersonDTO editPerson(CompletePersonDTO cp) {
+    public PersonDTO editPerson(CompletePersonDTO cp) throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException {
         EntityManager em = getEntityManager();
+        //Create person
         Person person = new Person(cp.getEmail(), cp.getfName(), cp.getlName());
-        person.setPhones(makePhoneSet(cp));
-        person.setHobbies(makeHobbyList(p.getHobbies(names), p.getHobbies(description)));
+        person.setId(cp.getId());
+        //Set phone
+        Set<Phone> phones = makePhoneSet(cp.getPhoneNumber());
+        phones.iterator().next().setDescription(cp.getPhoneDescription());
+        person.setPhones(phones);
+        //Set hobby
+        person.setHobbies(makeHobbyList(cp.getHobbyName(), cp.getHobbyDescription()));
+        //Set address
+        CityInfo cityInfo = new CityInfo(cp.getCity(), cp.getZip());
+        Address adr = new Address(cp.getStreet(), cp.getadditionalAddressInfo(), cityInfo);
+        person.setAddress(adr);
         try {
             em.getTransaction().begin();
-            em.merge(person);
+            Person p = em.find(Person.class, (long) cp.getId());
+            if (p == null) {
+                throw new NoContentFoundException("No content found for this request");
+            }
+            PersonFieldsToEditCheck(cp, p);
+            em.merge(p);
             em.getTransaction().commit();
-            return new PersonDTO(person);
+            return new PersonDTO(p);
         } finally {
             em.close();
         }
-    }*/
+    }
+
+    private void PersonFieldsToEditCheck(CompletePersonDTO cp, Person person) throws SecurityException, IllegalAccessException, WrongPersonFormatException, IllegalArgumentException {
+        Field[] fields = cp.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getType().equals(String.class)) {
+                field.setAccessible(true);
+                if (field.get(cp) != null) {
+                    switch(field.getName()){
+                        case "email":
+                            person.setEmail(cp.getEmail());
+                            break;
+                        case "fName":
+                            person.setfName(cp.getfName());
+                            break;
+                        case "lName":
+                            person.setlName(cp.getlName());
+                            break;
+                        case "street":
+                            person.getAddress().setStreet(cp.getStreet());
+                            break;
+                        case "additionalAddressInfo":
+                            person.getAddress().setAdditionalInfo(cp.getadditionalAddressInfo());
+                            break;
+                        case "city":
+                            person.getAddress().getCityInfo().setCity(cp.getCity());
+                            break;
+                        case "zip":
+                            person.getAddress().getCityInfo().setZipCode(cp.getZip());
+                            break;
+                        case "hobbyName":
+                            person.setHobbies(makeHobbyList(cp.getHobbyName(), cp.getHobbyDescription()));
+                            break;
+                        case "phoneNumber":
+                            person.setPhones(makePhoneSet(cp.getPhoneNumber()));
+                            if(cp.getPhoneDescription() == null) {
+                                throw new WrongPersonFormatException("No phone description found.");
+                            } else {
+                                person.getPhones().iterator().next().setDescription(cp.getPhoneDescription());
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
     public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {

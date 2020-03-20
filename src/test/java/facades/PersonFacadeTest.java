@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,22 +43,21 @@ public class PersonFacadeTest {
         facade = PersonFacade.getPersonFacade(emf);
     }
 
-    @AfterAll
-    public static void tearDownClass() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
-
+//    @AfterAll
+//    public static void tearDownClass() {
+//        EntityManager em = emf.createEntityManager();
+//        try {
+//            em.getTransaction().begin();
+//            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+//            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+//            em.getTransaction().commit();
+//        } finally {
+//            em.close();
+//        }
+//    }
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
@@ -244,19 +242,61 @@ public class PersonFacadeTest {
         });
     }
 
-    /*
     @Test
-    public void testEditPerson() {
-        p1.setfName("John");
-        p1.addHobby(new Hobby("eating", "stuffing food in your face"));
-        CompletePersonDTO cpDTO = new CompletePersonDTO(p1);
+    public void testEditPerson() throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setId(p1.getId());
+        cpDTO.setfName("FirstNameEdit");
+        cpDTO.setlName("LastNameEdit");
+        cpDTO.setCity("cityEdit");
+        cpDTO.setEmail("mailEdit");
+        cpDTO.setHobbyName("hby1Edit, hby2Edit");
+        cpDTO.setHobbyDescription("desc1Edit, desc2Edit");
+        cpDTO.setPhoneNumber("29384756Edit");
+        cpDTO.setPhoneDescription("descriptionEdit");
+        cpDTO.setStreet("streetEdit");
+        cpDTO.setZip("zipEdit");
+        cpDTO.setadditionalAddressInfo("additional infoEdit");
         PersonDTO editPerson = facade.editPerson(cpDTO);
-        System.out.println(editPerson);
-    }*/
-
-    //@Test
+        assertEquals(cpDTO.getfName(), editPerson.getfName());
+        assertEquals(cpDTO.getZip(), editPerson.getZip());
+    }
+    
+    @Test
     public void testEditPersonWrongID() {
-
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setId(0L);
+        cpDTO.setlName("LastNameEdit");
+        cpDTO.setCity("cityEdit");
+        cpDTO.setEmail("mailEdit");
+        cpDTO.setHobbyName("hby1Edit, hby2Edit");
+        cpDTO.setHobbyDescription("desc1Edit, desc2Edit");
+        cpDTO.setPhoneNumber("29384756Edit");
+        cpDTO.setPhoneDescription("descriptionEdit");
+        cpDTO.setStreet("streetEdit");
+        cpDTO.setZip("zipEdit");
+        cpDTO.setadditionalAddressInfo("additional infoEdit");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.editPerson(cpDTO);
+        });
+    }
+    
+    @Test
+    public void testEditPersonWithoutFirstName() throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException{
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setId(p1.getId());
+        cpDTO.setlName("LastNameEdit");
+        cpDTO.setCity("cityEdit");
+        cpDTO.setEmail("mailEdit");
+        cpDTO.setHobbyName("hby1Edit, hby2Edit");
+        cpDTO.setHobbyDescription("desc1Edit, desc2Edit");
+        cpDTO.setPhoneNumber("29384756Edit");
+        cpDTO.setPhoneDescription("descriptionEdit");
+        cpDTO.setStreet("streetEdit");
+        cpDTO.setadditionalAddressInfo("additional infoEdit");
+        PersonDTO editPerson = facade.editPerson(cpDTO);
+        assertEquals(p1.getfName(), editPerson.getfName());
+        assertEquals(p1.getAddress().getCityInfo().getZipCode(), editPerson.getZip());
     }
 
     @Test
