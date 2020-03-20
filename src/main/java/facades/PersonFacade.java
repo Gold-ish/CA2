@@ -136,7 +136,7 @@ public class PersonFacade {
         for (Field field : fields) {
             if (field.getType().equals(String.class)) {
                 field.setAccessible(true);
-                if (field.get(cp) != null) {
+                if (field.get(cp) != null && field.get(cp) != "") {
                     switch (field.getName()) {
                         case "email":
                             person.setEmail(cp.getEmail());
