@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -117,7 +116,7 @@ public class Person implements Serializable {
         return hobbies;
     }
     
-    public String getHobbiesString(){
+    public String getHobbiesName(){
         StringBuilder sb  = new StringBuilder();
         for (Hobby hobby : hobbies) {
             sb.append(hobby.getName());
@@ -135,31 +134,6 @@ public class Person implements Serializable {
             hobbies = new ArrayList<>();
         }
         hobbies.add(hobby);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.id);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Person other = (Person) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
     }
 
     @Override

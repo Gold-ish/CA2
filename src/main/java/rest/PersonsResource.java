@@ -58,7 +58,7 @@ public class PersonsResource {
 //    @Consumes(MediaType.APPLICATION_JSON)
 //    @Produces(MediaType.APPLICATION_JSON)
 //    public String editPersonOnId(String personInfo, @PathParam("id") Long id) {
-//        PersonDTO pCon = GSON.fromJson(personInfo, PersonDTO.class);
+//        PersonDTO pCon = GSON.fromJson(personInfo, CompletePersonDTO.class);
 //        pCon.setId(id);
 //        return GSON.toJson(FACADE.editPerson(pCon));
 //    }

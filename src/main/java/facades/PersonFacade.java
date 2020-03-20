@@ -115,11 +115,11 @@ public class PersonFacade {
 
     /*
     //TODO put person update person based on id
-    public PersonDTO editPerson(PersonDTO p) {
+    public PersonDTO editPerson(CompletePersonDTO cp) {
         EntityManager em = getEntityManager();
-        Person person = new Person(p);
-        person.setPhones(makePhoneSet(p.getPhones()));
-        //person.setHobbies(makeHobbyList(p.getHobbies(names), p.getHobbies(description)));
+        Person person = new Person(cp.getEmail(), cp.getfName(), cp.getlName());
+        person.setPhones(makePhoneSet(cp));
+        person.setHobbies(makeHobbyList(p.getHobbies(names), p.getHobbies(description)));
         try {
             em.getTransaction().begin();
             em.merge(person);
@@ -129,6 +129,7 @@ public class PersonFacade {
             em.close();
         }
     }*/
+    
     public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {

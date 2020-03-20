@@ -42,9 +42,8 @@ public class PersonDTO {
             this.city = p.getAddress().getCityInfo().getCity();
             this.zip = p.getAddress().getCityInfo().getZipCode();
         }
-        this.hobbies = p.getHobbiesString();
+        this.hobbies = p.getHobbiesName();
         this.phones = p.getPhoneNumbers();
-
     }
 
     //Getters & Setters

@@ -27,7 +27,7 @@ public class CompletePersonDTO {
     //Constructor
     public CompletePersonDTO() {
     }
-
+    
     //Getters & Setters
     public Long getId() {
         return id;
