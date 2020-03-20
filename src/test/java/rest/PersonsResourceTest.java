@@ -427,31 +427,6 @@ public class PersonsResourceTest {
 
     //PUT
     @Test
-    public void testEditPersonPhone() {
-        CompletePersonDTO cpDTO = new CompletePersonDTO();
-        cpDTO.setEmail("test-Email@mail.com");
-        cpDTO.setfName("testFirstName");
-        cpDTO.setlName("testLastName");
-        cpDTO.setStreet("testStreet");
-        cpDTO.setCity("testCity");
-        cpDTO.setZip("852456");
-        cpDTO.setadditionalAddressInfo("testHouse");
-        cpDTO.setHobbyName("Programming, Fishing");
-        cpDTO.setHobbyDescription("Hobby Description Test, JAJAJAJAJA");
-        cpDTO.setPhoneNumber("29384756");//87654321 - 29384756
-        given().contentType(ContentType.JSON)
-                .body(cpDTO)
-                .when()
-                .put("/persons/" + p3.getId())
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
-                .body("code", equalTo(400))
-                .body("message", equalTo("No phone description found."));
-    }
-
-    //PUT
-    @Test
     public void testEditPersonWrongHobbyInput() {
         CompletePersonDTO cpDTO = new CompletePersonDTO();
         cpDTO.setHobbyName("Programming, Fishing");
