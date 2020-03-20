@@ -70,31 +70,42 @@
 
                     <!-- Modal content-->
                     <div class="modal-content">
+                        <form>
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Edit Person</h4>
                         </div>
                         <div class="modal-body">
                             <p>ID</p>
-                            <input id="inputIdPUT"/>
+                            <input id="inputIdPUT" type="number"/>
+                            <div id="putError"></div>
                             <p>First name: </p>
                             <input id="inputFNamePUT"/>
                             <p>Last name: </p>
                             <input id="inputLNamePUT"/>
+                            <p>Email: </p>
+                            <input id="inputEmailPUT"/>
                             <p>Street: </p>
                             <input id="inputStreetPUT"/>
+                            <p>Addritional Addres Info: </p>
+                            <input id="inputaInfoPUT"/>
                             <p>City: </p>
                             <input id="inputCityPUT"/>
                             <p>Zip: </p>
                             <input id="inputZipPUT"/>
                             <p>Hobbies: </p>
                             <input id="inputHobbyPUT"/>
+                            <p>Hobby Descriptions: </p>
+                            <input id="inputHobbyDescPUT"/>
                             <p>Phone Numbers: </p>
                             <input id="inputPhoneNumberPUT"/>
+                            <p>Phone Description: </p>
+                            <input id="inputPhoneDescPUT"/>
                         </div>
                         <div class="modal-footer">
                             <input type="submit" data-dismiss="modal" id="editBtn" class="btn btn-default" value="Edit Person">
                         </div>
+                        </form>
                     </div>
 
                 </div>

@@ -3,8 +3,6 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.CompletePersonDTO;
-import dto.PersonDTO;
-import dto.PersonsDTO;
 import exception.NoContentFoundException;
 import exception.WrongPersonFormatException;
 import facades.PersonFacade;
@@ -32,24 +30,21 @@ public class PersonsResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public String getAllPersons() {
-        PersonsDTO psDTO = FACADE.getAllPersons();
-        return GSON.toJson(psDTO);
+        return GSON.toJson(FACADE.getAllPersons());
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPersonById(@PathParam("id") int id) throws NoContentFoundException{
-        PersonDTO pDTO = FACADE.getPersonById(id);
-        return GSON.toJson(pDTO);
+        return GSON.toJson(FACADE.getPersonById(id));
     }
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public String addPerson(String person) throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
-        PersonDTO pCon = FACADE.addPerson(GSON.fromJson(person, CompletePersonDTO.class));
-        return GSON.toJson(pCon);
+        return GSON.toJson(FACADE.addPerson(GSON.fromJson(person, CompletePersonDTO.class)));
     }
     
     @PUT
@@ -57,33 +52,30 @@ public class PersonsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String editPersonOnId(String personInfo, @PathParam("id") Long id) throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException {
-        CompletePersonDTO pCon = GSON.fromJson(personInfo, CompletePersonDTO.class);
-        pCon.setId(id);
-        return GSON.toJson(FACADE.editPerson(pCon));
+        CompletePersonDTO cpDto = GSON.fromJson(personInfo, CompletePersonDTO.class);
+        cpDto.setId(id);
+        return GSON.toJson(FACADE.editPerson(cpDto));
     }
 
     @GET
     @Path("phone/{phoneNo}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPersonByPhoneNo(@PathParam("phoneNo") String phoneNo) throws NoContentFoundException{
-        PersonDTO pDTO = FACADE.getPersonByPhone(phoneNo);
-        return GSON.toJson(pDTO);
+        return GSON.toJson(FACADE.getPersonByPhone(phoneNo));
     }
 
     @GET
     @Path("hobby/{hobby}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPersonsByHobby(@PathParam("hobby") String hobby) throws NoContentFoundException{
-        PersonsDTO psDTO = FACADE.getAllPersonsByHobby(hobby);
-        return GSON.toJson(psDTO);
+        return GSON.toJson(FACADE.getAllPersonsByHobby(hobby));
     }
 
     @GET
     @Path("city/{city}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPersonsByCity(@PathParam("city") String city) throws NoContentFoundException{
-        PersonsDTO psDTO = FACADE.getPersonsFromCity(city);
-        return GSON.toJson(psDTO);
+        return GSON.toJson(FACADE.getPersonsFromCity(city));
     }
 
     @GET
