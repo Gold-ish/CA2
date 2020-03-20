@@ -1,15 +1,7 @@
-//fetch(fetchUrl)
-//        .then(function (response) {
-//            return response.json();
-//        })
-//        .then(function (data) {
-//            callback(data);
-//        });
-
-document.getElementById("addBtn").addEventListener("onclick", postPerson);
+document.getElementById("addBtn").addEventListener("click", postPerson);
 document.getElementById("editBtn").addEventListener("click", editPerson);
 document.getElementById("getAllBtn").addEventListener('click', (event) => {
-    fetchFunction("api/person", insertAllPersonsInTable);
+    fetchFunction("api/persons", insertAllPersonsInTable);
 });
 
 function postPerson() {
@@ -111,10 +103,10 @@ function createTableFromArray(array) {
     console.log("Ello All");
     let tableHead = "<tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Street</th><th>City</th><th>Zip</th><th>Hobbies</th><th>Phones</th><th></th>";
     let htmlRows = "";
-    console.log(array.personsList);
+    console.log(array);
 
 
-    array.personsList.forEach(element => {
+    array.forEach(element => {
         let temp = "<tr>" +
                 "<td>" + element.id + "</td>" +
                 "<td>" + element.fName + "</td>" +
@@ -124,7 +116,7 @@ function createTableFromArray(array) {
                 "<td>" + element.zip + "</td>" +
                 "<td>" + element.hobbies + "</td>" +
                 "<td>" + element.phones + "</td>" +
-                "<tr>"
+                "</tr>";
         htmlRows += temp;
     });
 

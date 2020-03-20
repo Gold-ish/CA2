@@ -229,9 +229,79 @@ public class PersonsResourceTest {
     }
 
     //POST
-    //@Test
-    public void testAddPersonFail() {
+    @Test
+    public void testAddPersonMissingInput_fName() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setlName("testLastName");
+        cpDTO.setStreet("testStreet");
+        cpDTO.setCity("testCity");
+        cpDTO.setZip("852456");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test, asdf");
+        cpDTO.setPhoneNumber("852134679");
+        cpDTO.setPhoneDescription("Phone Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .post("/persons")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
+                .body("code", equalTo(400))
+                .body("message", equalTo("Field First name is required"));
 
+    }
+
+    @Test
+    public void testAddPersonWrongHobbyInput() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setfName("testFirstName");
+        cpDTO.setlName("testLastName");
+        cpDTO.setStreet("testStreet");
+        cpDTO.setCity("testCity");
+        cpDTO.setZip("852456");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test");
+        cpDTO.setPhoneNumber("852134679");
+        cpDTO.setPhoneDescription("Phone Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .post("/persons")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
+                .body("code", equalTo(400))
+                .body("message", equalTo("Hobbies and hobbie descriptions aren't the same length"));
+    }
+
+    @Test
+    public void testAddPersonExistingPhone() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setfName("testFirstName");
+        cpDTO.setlName("testLastName");
+        cpDTO.setStreet("testStreet");
+        cpDTO.setCity("testCity");
+        cpDTO.setZip("852456");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test, JAJAJAJAJA");
+        cpDTO.setPhoneNumber("87654321");
+        cpDTO.setPhoneDescription("Phone Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .post("/persons")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
+                .body("code", equalTo(400))
+                .body("message", equalTo("Phone number allready in use"));
     }
 
     //PUT
