@@ -1,8 +1,9 @@
 document.getElementById("addBtn").addEventListener("click", postPerson);
 document.getElementById("editBtn").addEventListener("click", editPerson);
-document.getElementById("getAllBtn").addEventListener('click', (event) => {
+document.getElementById("getAllBtn").addEventListener("click", (event) => {
     fetchFunction("api/persons/all", insertAllPersonsInTable);
 });
+document.getElementById("getBtn").addEventListener("click", getPerson);
 
 function postPerson() {
     let firstN = document.getElementById("inputFName").value;
@@ -83,25 +84,51 @@ function editPerson() {
     fetch("api/persons/" + inputId, options);
 }
 
+function getPerson() {
+    var radios = document.getElementsByName('radiobtn');
+    let inputInfo = document.getElementById('inputInfoGET').value;
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            if (radios[i].value === "id") {
+                fetchFunction("api/persons/" + inputInfo, insertPersonInTable);
+            } else if (radios[i].value === "phone") {
+                fetchFunction("api/persons/" + radios[i].value + '/' + inputInfo, insertPersonInTable);
+            } else {
+                fetchFunction("api/persons/" + radios[i].value + '/' + inputInfo, insertAllPersonsInTable);
+            }
+        }
+    }
+}
+
 
 function fetchFunction(fetchUrl, callback) {
     fetch(fetchUrl)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            callback(data);
-        });
-};
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.message === null || data.message === 'undefined') {
+                    callback(data);
+                } else {
+                    document.getElementById("output").innerHTML = data.message;
+                    document.getElementById("output").style = "color: red";
+                }
+            });
+}
 
 function insertAllPersonsInTable(dataArray) {
     let printString = createTableFromArray(dataArray);
     document.getElementById("output").innerHTML = printString;
-};
+}
+
+function insertPersonInTable(data) {
+    let printString = createTableFromData(data);
+    document.getElementById("output").innerHTML = printString;
+}
 
 function createTableFromArray(array) {
-    console.log("Ello All");
-    let tableHead = "<tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Street</th><th>City</th><th>Zip</th><th>Hobbies</th><th>Phones</th><th></th>";
+    let tableHead = "<thead><tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Street</th><th>City</th><th>Zip</th><th>Hobbies</th><th>Phones</th></tr></thead>";
     let htmlRows = "";
 
     array.personsList.forEach(element => {
@@ -118,8 +145,26 @@ function createTableFromArray(array) {
         htmlRows += temp;
     });
 
-    return "<table border='1'>" + tableHead + htmlRows + "</table>";
-};
+    return "<table class='table table-hover'>" + tableHead + htmlRows + "</table>";
+}
 
+
+function createTableFromData(element) {
+    let tableHead = "<thead><tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Street</th><th>City</th><th>Zip</th><th>Hobbies</th><th>Phones</th></tr></thead>";
+    let htmlRows = "";
+
+    htmlRows = "<tr>" +
+            "<td>" + element.id + "</td>" +
+            "<td>" + element.fName + "</td>" +
+            "<td>" + element.lName + "</td>" +
+            "<td>" + element.street + "</td>" +
+            "<td>" + element.city + "</td>" +
+            "<td>" + element.zip + "</td>" +
+            "<td>" + element.hobbies + "</td>" +
+            "<td>" + element.phones + "</td>" +
+            "</tr>";
+
+    return "<table class='table table-hover'>" + tableHead + htmlRows + "</table>";
+}
 
 
