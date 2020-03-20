@@ -263,25 +263,6 @@ public class PersonFacadeTest {
     }
     
     @Test
-    public void testEditPersonWrongID() {
-        CompletePersonDTO cpDTO = new CompletePersonDTO();
-        cpDTO.setId(0L);
-        cpDTO.setlName("LastNameEdit");
-        cpDTO.setCity("cityEdit");
-        cpDTO.setEmail("mailEdit");
-        cpDTO.setHobbyName("hby1Edit, hby2Edit");
-        cpDTO.setHobbyDescription("desc1Edit, desc2Edit");
-        cpDTO.setPhoneNumber("29384756Edit");
-        cpDTO.setPhoneDescription("descriptionEdit");
-        cpDTO.setStreet("streetEdit");
-        cpDTO.setZip("zipEdit");
-        cpDTO.setadditionalAddressInfo("additional infoEdit");
-        Assertions.assertThrows(NoContentFoundException.class, () -> {
-            facade.editPerson(cpDTO);
-        });
-    }
-    
-    @Test
     public void testEditPersonWithoutFirstName() throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException{
         CompletePersonDTO cpDTO = new CompletePersonDTO();
         cpDTO.setId(p1.getId());
@@ -311,7 +292,47 @@ public class PersonFacadeTest {
         assertEquals(cpDTO.getHobbyName(), editPerson.getHobbies());
         assertEquals(cpDTO.getPhoneNumber(), editPerson.getPhones().iterator().next());
     }
+    
+    @Test
+    public void testEditPersonWrongID() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setId(0L);
+        cpDTO.setlName("LastNameEdit");
+        cpDTO.setCity("cityEdit");
+        cpDTO.setEmail("mailEdit");
+        cpDTO.setHobbyName("hby1Edit, hby2Edit");
+        cpDTO.setHobbyDescription("desc1Edit, desc2Edit");
+        cpDTO.setPhoneNumber("29384756Edit");
+        cpDTO.setPhoneDescription("descriptionEdit");
+        cpDTO.setStreet("streetEdit");
+        cpDTO.setZip("zipEdit");
+        cpDTO.setadditionalAddressInfo("additional infoEdit");
+        Assertions.assertThrows(NoContentFoundException.class, () -> {
+            facade.editPerson(cpDTO);
+        });
+    }
+    
+    @Test
+    public void testEditPersonExistingPhone() {
+        System.out.println("testEditPersonExistingPhone");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setPhoneNumber("29384756");//Allready exists in setup
+        Assertions.assertThrows(WrongPersonFormatException.class, () -> {
+            facade.addPerson(cpDTO);
+        });
+    }
 
+    @Test
+    public void testEditPersonWrongHobbyInput(){
+        System.out.println("testEditPersonWrongHobbyInput");
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setHobbyName("hby1, hby2");
+        cpDTO.setHobbyDescription("desc1");
+        Assertions.assertThrows(WrongPersonFormatException.class, () -> {
+            facade.addPerson(cpDTO);
+        });
+    }
+    
     @Test
     public void testGetPersonByPhone() throws NoContentFoundException {
         System.out.println("GetPersonByPhone");

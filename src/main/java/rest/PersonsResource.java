@@ -12,6 +12,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -51,18 +52,15 @@ public class PersonsResource {
         return GSON.toJson(pCon);
     }
     
-    
-    
-    
-//    @PUT
-//    @Path("/{id}")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public String editPersonOnId(String personInfo, @PathParam("id") Long id) {
-//        PersonDTO pCon = GSON.fromJson(personInfo, CompletePersonDTO.class);
-//        pCon.setId(id);
-//        return GSON.toJson(FACADE.editPerson(pCon));
-//    }
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String editPersonOnId(String personInfo, @PathParam("id") Long id) throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException {
+        CompletePersonDTO pCon = GSON.fromJson(personInfo, CompletePersonDTO.class);
+        pCon.setId(id);
+        return GSON.toJson(FACADE.editPerson(pCon));
+    }
 
     @GET
     @Path("phone/{phoneNo}")

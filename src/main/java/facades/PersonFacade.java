@@ -173,6 +173,19 @@ public class PersonFacade {
                             } else {
                                 person.getPhones().iterator().next().setDescription(cp.getPhoneDescription());
                                 person.getPhones().iterator().next().setPerson(person);
+//                                Set<Phone> checkPhn = checkPhone(person.getPhones(), em);
+//                                if (checkPhn.iterator().next().getId() != null) {
+//                                    throw new WrongPersonFormatException("Phone number allready in use");
+//                                } else {
+//                                    person.setPhones(checkPhn);
+//                                }
+                                /*
+                                if (checkPhn.iterator().next().getId() != null) {
+                                    throw new WrongPersonFormatException("Phone number allready in use");
+                                } else {
+                                    phonesSet = checkPhn;
+                                }
+                                */
                             }
                             break;
                     }

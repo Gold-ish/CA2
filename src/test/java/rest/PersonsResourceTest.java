@@ -252,7 +252,7 @@ public class PersonsResourceTest {
                 .body("code", equalTo(400))
                 .body("message", equalTo("Field(s); fName is required"));
     }
-    
+
     @Test
     public void testAddPersonMissingInput_Multiple() {
         CompletePersonDTO cpDTO = new CompletePersonDTO();
@@ -325,41 +325,146 @@ public class PersonsResourceTest {
     }
 
     //PUT
-    //@Test
+    @Test
     public void testEditPerson() {
-//        CompletePersonDTO cpDTO = new CompletePersonDTO();
-//        cpDTO.setEmail("test-Email@mail.com");
-//        cpDTO.setfName("testFirstName");
-//        cpDTO.setlName("testLastName");
-//        cpDTO.setStreet("testStreet");
-//        cpDTO.setCity("testCity");
-//        cpDTO.setZip("852456");
-//        cpDTO.setadditionalAddressInfo("testHouse");
-//        cpDTO.setHobbyName("Programming, Fishing");
-//        cpDTO.setHobbyDescription("Hobby Description Test, asdf");
-//        cpDTO.setPhoneNumber("852134679");
-//        cpDTO.setPhoneDescription("Phone Description Test");
-//        given().contentType(ContentType.JSON)
-//                .body(cpDTO)
-//                .when()
-//                .post("/persons")
-//                .then()
-//                .assertThat()
-//                .statusCode(HttpStatus.OK_200.getStatusCode())
-//                .body("id", notNullValue())
-//                .body("fName", equalTo("testFirstName"))
-//                .body("lName", equalTo("testLastName"))
-//                .body("street", equalTo("testStreet"))
-//                .body("city", equalTo("testCity"))
-//                .body("zip", equalTo("852456"))
-//                .body("hobbies", equalTo("Programming, Fishing"))
-//                .body("phones", containsInAnyOrder("852134679"));
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setfName("testFirstName");
+        cpDTO.setlName("testLastName");
+        cpDTO.setStreet("testStreet");
+        cpDTO.setCity("testCity");
+        cpDTO.setZip("852456");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test, asdf");
+        cpDTO.setPhoneNumber("852134679");
+        cpDTO.setPhoneDescription("Phone Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .put("/persons/" + p3.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("id", equalTo(Math.toIntExact(p3.getId())))
+                .body("fName", equalTo("testFirstName"))
+                .body("lName", equalTo("testLastName"))
+                .body("street", equalTo("testStreet"))
+                .body("city", equalTo("testCity"))
+                .body("zip", equalTo("852456"))
+                .body("hobbies", equalTo("Programming, Fishing"))
+                .body("phones", containsInAnyOrder("852134679"));
     }
 
     //PUT
-    //@Test
-    public void testEditPersonFail() {
+    @Test
+    public void testEditPersonWithoutFirstName() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setlName("testLastName");
+        cpDTO.setStreet("testStreet");
+        cpDTO.setCity("testCity");
+        cpDTO.setZip("852456");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test, asdf");
+        cpDTO.setPhoneNumber("852134679");
+        cpDTO.setPhoneDescription("Phone Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .put("/persons/" + p3.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("id", equalTo(Math.toIntExact(p3.getId())))
+                .body("fName", equalTo(p3.getfName()))
+                .body("lName", equalTo("testLastName"))
+                .body("street", equalTo("testStreet"))
+                .body("city", equalTo("testCity"))
+                .body("zip", equalTo("852456"))
+                .body("hobbies", equalTo("Programming, Fishing"))
+                .body("phones", containsInAnyOrder("852134679"));
+    }
 
+    //PUT
+    @Test
+    public void testEditPersonAllanGoesFishing_AndStartsReading() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setHobbyName("Gaming, Fishing, Reading");
+        cpDTO.setHobbyDescription(" , , Wasting hours of life");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .put("/persons/" + p3.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("id", equalTo(Math.toIntExact(p3.getId())))
+                .body("fName", equalTo(p3.getfName()))
+                .body("lName", equalTo(p3.getlName()))
+                .body("street", equalTo(p3.getAddress().getStreet()))
+                .body("city", equalTo(p3.getAddress().getCityInfo().getCity()))
+                .body("zip", equalTo(p3.getAddress().getCityInfo().getZipCode()))
+                .body("hobbies", equalTo("Gaming, Fishing, Reading"));
+    }
+
+    //PUT
+    @Test
+    public void testEditPersonWrongID() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+//The method dosn't reach the check therfore we haven applied all the setters for the cpDTO.
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .put("/persons/0")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", equalTo(404))
+                .body("message", equalTo("No content found for this request"));
+    }
+
+    //PUT
+    @Test
+    public void testEditPersonPhone() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setfName("testFirstName");
+        cpDTO.setlName("testLastName");
+        cpDTO.setStreet("testStreet");
+        cpDTO.setCity("testCity");
+        cpDTO.setZip("852456");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test, JAJAJAJAJA");
+        cpDTO.setPhoneNumber("29384756");//87654321 - 29384756
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .put("/persons/" + p3.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
+                .body("code", equalTo(400))
+                .body("message", equalTo("No phone description found."));
+    }
+
+    //PUT
+    @Test
+    public void testEditPersonWrongHobbyInput() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setHobbyName("Programming, Fishing");
+        cpDTO.setHobbyDescription("Hobby Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .put("/persons/" + p3.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
+                .body("code", equalTo(400))
+                .body("message", equalTo("Hobbies and hobbie descriptions aren't the same length"));
     }
 
     //GET
