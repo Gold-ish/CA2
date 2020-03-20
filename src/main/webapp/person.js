@@ -1,5 +1,4 @@
-
-document.getElementById("addBtn").addEventListener("onclick", postPerson);
+document.getElementById("addBtn").addEventListener("click", postPerson);
 document.getElementById("editBtn").addEventListener("click", editPerson);
 document.getElementById("getAllBtn").addEventListener('click', (event) => {
     fetchFunction("api/persons", insertAllPersonsInTable);
@@ -107,7 +106,7 @@ function createTableFromArray(array) {
     console.log(array);
 
 
-    array.personsList.forEach(element => {
+    array.forEach(element => {
         let temp = "<tr>" +
                 "<td>" + element.id + "</td>" +
                 "<td>" + element.fName + "</td>" +

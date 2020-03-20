@@ -285,27 +285,27 @@ public class PersonFacade {
     }
 
     private void checkIfComplete(CompletePersonDTO completePerson) throws WrongPersonFormatException {
-        if (completePerson.getEmail() == null || completePerson.getEmail().isBlank()) {
+        if (completePerson.getEmail() == null || completePerson.getEmail().isEmpty()) {
             throw new WrongPersonFormatException("Field E-mail is required");
-        } else if (completePerson.getHobbyDescription() == null || completePerson.getHobbyDescription().isBlank()) {
+        } else if (completePerson.getHobbyDescription() == null || completePerson.getHobbyDescription().isEmpty()) {
             throw new WrongPersonFormatException("Field Hobby description is required");
-        } else if (completePerson.getHobbyName() == null || completePerson.getHobbyName().isBlank()) {
+        } else if (completePerson.getHobbyName() == null || completePerson.getHobbyName().isEmpty()) {
             throw new WrongPersonFormatException("Field Hobby name is required");
-        } else if (completePerson.getPhoneDescription() == null || completePerson.getPhoneDescription().isBlank()) {
+        } else if (completePerson.getPhoneDescription() == null || completePerson.getPhoneDescription().isEmpty()) {
             throw new WrongPersonFormatException("Field Phone description is required");
-        } else if (completePerson.getPhoneNumber() == null || completePerson.getPhoneNumber().isBlank()) {
+        } else if (completePerson.getPhoneNumber() == null || completePerson.getPhoneNumber().isEmpty()) {
             throw new WrongPersonFormatException("Field Phone number is required");
-        } else if (completePerson.getStreet() == null || completePerson.getStreet().isBlank()) {
+        } else if (completePerson.getStreet() == null || completePerson.getStreet().isEmpty()) {
             throw new WrongPersonFormatException("Field Street is required");
-        } else if (completePerson.getZip() == null || completePerson.getZip().isBlank()) {
+        } else if (completePerson.getZip() == null || completePerson.getZip().isEmpty()) {
             throw new WrongPersonFormatException("Field Zip is required");
-        } else if (completePerson.getadditionalAddressInfo() == null || completePerson.getadditionalAddressInfo().isBlank()) {
+        } else if (completePerson.getadditionalAddressInfo() == null || completePerson.getadditionalAddressInfo().isEmpty()) {
             throw new WrongPersonFormatException("Field Additional address info is required");
-        } else if (completePerson.getfName() == null || completePerson.getfName().isBlank()) {
+        } else if (completePerson.getfName() == null || completePerson.getfName().isEmpty()) {
             throw new WrongPersonFormatException("Field First name is required");
-        } else if (completePerson.getlName() == null || completePerson.getlName().isBlank()) {
+        } else if (completePerson.getlName() == null || completePerson.getlName().isEmpty()) {
             throw new WrongPersonFormatException("Field Last name is required");
-        } else if(completePerson.getCity() == null || completePerson.getCity().isBlank()){
+        } else if(completePerson.getCity() == null || completePerson.getCity().isEmpty()){
             throw new WrongPersonFormatException("Field City is required");
         }
     }
