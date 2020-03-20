@@ -23,9 +23,9 @@ public class WrongPersonFormatExceptionMapper implements ExceptionMapper<WrongPe
     public Response toResponse(WrongPersonFormatException ex) {
        Logger.getLogger(WrongPersonFormatExceptionMapper.class.getName())
            .log(Level.SEVERE, null, ex);
-       ExceptionDTO err = new ExceptionDTO(404,ex.getMessage());
+       ExceptionDTO err = new ExceptionDTO(400,ex.getMessage());
        return Response
-               .status(404)
+               .status(400)
                .entity(gson.toJson(err))
                .type(MediaType.APPLICATION_JSON)
                .build();
