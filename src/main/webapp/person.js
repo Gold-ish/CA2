@@ -17,17 +17,6 @@ function postPerson() {
     let hDesc = document.getElementById("inputHobbyDescription").value;
     let phoneNo = document.getElementById("inputPhoneNumber").value;
     let phoneDesc = document.getElementById("inputPhoneDescription").value;
-    console.log(firstN);
-    console.log(lastN);
-    console.log(email);
-    console.log(street);
-    console.log(aInfo);
-    console.log(city);
-    console.log(zip);
-    console.log(hobby);
-    console.log(hDesc);
-    console.log(phoneNo);
-    console.log(phoneDesc);
 
     let options = {
         method: "POST",
@@ -50,12 +39,22 @@ function postPerson() {
 
         })
     };
-    fetch("api/persons", options);
+    fetch("api/persons", options).then(function (response) {
+        return response.json();
+    })
+            .then(function (data) {
+                if (!data.hasOwnProperty("message")) {
+                    insertPersonInTable(data);
+                } else {
+                    document.getElementById("output").innerHTML = data.message;
+                    document.getElementById("output").style = "color: red";
+                }
+            });
+
 }
 
 
 function editPerson() {
-    console.log("Hi from function");
     let inputId = document.getElementById("inputIdPUT").value;
     let inputfName = document.getElementById("inputFNamePUT").value;
     let inputlName = document.getElementById("inputLNamePUT").value;
@@ -81,7 +80,17 @@ function editPerson() {
         })
     };
 
-    fetch("api/persons/" + inputId, options);
+    fetch("api/persons/" + inputId, options).then(function (response) {
+        return response.json();
+    })
+            .then(function (data) {
+                if (!data.hasOwnProperty("message")) {
+                    insertPersonInTable(data);
+                } else {
+                    document.getElementById("output").innerHTML = data.message;
+                    document.getElementById("output").style = "color: red";
+                }
+            });
 }
 
 function getPerson() {
@@ -108,7 +117,8 @@ function fetchFunction(fetchUrl, callback) {
                 return response.json();
             })
             .then(function (data) {
-                if (data.message === null || data.message === 'undefined') {
+                if (!data.hasOwnProperty("message")) {
+                    document.getElementById("output").style = "color: black";
                     callback(data);
                 } else {
                     document.getElementById("output").innerHTML = data.message;

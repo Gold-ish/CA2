@@ -342,7 +342,7 @@ public class PersonFacade {
         for (Field field : fields) {
             if (field.getType().equals(String.class)) {
                 field.setAccessible(true);
-                if (field.get(completePerson) == null) {
+                if (field.get(completePerson) == null || ((String) field.get(completePerson)).isEmpty()) {
                     sb.append(field.getName() + ", ");
                 }
                 //System.out.println("Variable name: " + field.getName());
