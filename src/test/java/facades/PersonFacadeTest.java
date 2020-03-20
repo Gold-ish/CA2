@@ -298,6 +298,19 @@ public class PersonFacadeTest {
         assertEquals(p1.getfName(), editPerson.getfName());
         assertEquals(p1.getAddress().getCityInfo().getZipCode(), editPerson.getZip());
     }
+    
+    @Test
+    public void testEditPersonAllanGoesFishing_AndStartsReading() throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException{
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setId(p3.getId());
+        cpDTO.setPhoneNumber("1234567890");
+        cpDTO.setPhoneDescription("ApePhone");
+        cpDTO.setHobbyName("Fishing, Gaming, Reading");
+        cpDTO.setHobbyDescription(" , , Wasting alot of hours");
+        PersonDTO editPerson = facade.editPerson(cpDTO);
+        assertEquals(cpDTO.getHobbyName(), editPerson.getHobbies());
+        assertEquals(cpDTO.getPhoneNumber(), editPerson.getPhones().iterator().next());
+    }
 
     @Test
     public void testGetPersonByPhone() throws NoContentFoundException {

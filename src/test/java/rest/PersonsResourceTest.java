@@ -327,7 +327,33 @@ public class PersonsResourceTest {
     //PUT
     //@Test
     public void testEditPerson() {
-
+//        CompletePersonDTO cpDTO = new CompletePersonDTO();
+//        cpDTO.setEmail("test-Email@mail.com");
+//        cpDTO.setfName("testFirstName");
+//        cpDTO.setlName("testLastName");
+//        cpDTO.setStreet("testStreet");
+//        cpDTO.setCity("testCity");
+//        cpDTO.setZip("852456");
+//        cpDTO.setadditionalAddressInfo("testHouse");
+//        cpDTO.setHobbyName("Programming, Fishing");
+//        cpDTO.setHobbyDescription("Hobby Description Test, asdf");
+//        cpDTO.setPhoneNumber("852134679");
+//        cpDTO.setPhoneDescription("Phone Description Test");
+//        given().contentType(ContentType.JSON)
+//                .body(cpDTO)
+//                .when()
+//                .post("/persons")
+//                .then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("id", notNullValue())
+//                .body("fName", equalTo("testFirstName"))
+//                .body("lName", equalTo("testLastName"))
+//                .body("street", equalTo("testStreet"))
+//                .body("city", equalTo("testCity"))
+//                .body("zip", equalTo("852456"))
+//                .body("hobbies", equalTo("Programming, Fishing"))
+//                .body("phones", containsInAnyOrder("852134679"));
     }
 
     //PUT

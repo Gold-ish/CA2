@@ -117,27 +117,13 @@ public class PersonFacade {
     //TODO put person update person based on id
     public PersonDTO editPerson(CompletePersonDTO cp) throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException {
         EntityManager em = getEntityManager();
-        //Create person
-        Person person = new Person(cp.getEmail(), cp.getfName(), cp.getlName());
-        person.setId(cp.getId());
-        //Set phone
-        Set<Phone> phones = makePhoneSet(cp.getPhoneNumber());
-        phones.iterator().next().setDescription(cp.getPhoneDescription());
-        person.setPhones(phones);
-        //Set hobby
-        person.setHobbies(makeHobbyList(cp.getHobbyName(), cp.getHobbyDescription()));
-        //Set address
-        CityInfo cityInfo = new CityInfo(cp.getCity(), cp.getZip());
-        Address adr = new Address(cp.getStreet(), cp.getadditionalAddressInfo(), cityInfo);
-        person.setAddress(adr);
         try {
             em.getTransaction().begin();
             Person p = em.find(Person.class, (long) cp.getId());
             if (p == null) {
                 throw new NoContentFoundException("No content found for this request");
             }
-            PersonFieldsToEditCheck(cp, p);
-            em.merge(p);
+            PersonFieldsToEditCheck(cp, p, em);
             em.getTransaction().commit();
             return new PersonDTO(p);
         } finally {
@@ -145,13 +131,13 @@ public class PersonFacade {
         }
     }
 
-    private void PersonFieldsToEditCheck(CompletePersonDTO cp, Person person) throws SecurityException, IllegalAccessException, WrongPersonFormatException, IllegalArgumentException {
+    private void PersonFieldsToEditCheck(CompletePersonDTO cp, Person person, EntityManager em) throws SecurityException, IllegalAccessException, WrongPersonFormatException, IllegalArgumentException {
         Field[] fields = cp.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.getType().equals(String.class)) {
                 field.setAccessible(true);
                 if (field.get(cp) != null) {
-                    switch(field.getName()){
+                    switch (field.getName()) {
                         case "email":
                             person.setEmail(cp.getEmail());
                             break;
@@ -174,14 +160,19 @@ public class PersonFacade {
                             person.getAddress().getCityInfo().setZipCode(cp.getZip());
                             break;
                         case "hobbyName":
-                            person.setHobbies(makeHobbyList(cp.getHobbyName(), cp.getHobbyDescription()));
+                            List<Hobby> hobbiesList = new ArrayList();
+                            hobbiesList = makeHobbyList(cp.getHobbyName(), cp.getHobbyDescription());
+                            List<Hobby> checkHob = checkHobby(hobbiesList, em);
+                            hobbiesList = checkHob;
+                            person.setHobbies(hobbiesList);
                             break;
                         case "phoneNumber":
                             person.setPhones(makePhoneSet(cp.getPhoneNumber()));
-                            if(cp.getPhoneDescription() == null) {
+                            if (cp.getPhoneDescription() == null) {
                                 throw new WrongPersonFormatException("No phone description found.");
                             } else {
                                 person.getPhones().iterator().next().setDescription(cp.getPhoneDescription());
+                                person.getPhones().iterator().next().setPerson(person);
                             }
                             break;
                     }
