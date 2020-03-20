@@ -45,7 +45,7 @@ public class PersonsResource {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public String addPerson(String person) throws WrongPersonFormatException {
+    public String addPerson(String person) throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
         PersonDTO pCon = FACADE.addPerson(GSON.fromJson(person, CompletePersonDTO.class));
         return GSON.toJson(pCon);
     }

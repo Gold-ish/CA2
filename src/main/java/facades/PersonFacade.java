@@ -6,6 +6,7 @@ import dto.PersonsDTO;
 import entities.*;
 import exception.NoContentFoundException;
 import exception.WrongPersonFormatException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -65,7 +66,7 @@ public class PersonFacade {
     }
 
     //TODO post person without id <- Add new person
-    public PersonDTO addPerson(CompletePersonDTO completePerson) throws WrongPersonFormatException {
+    public PersonDTO addPerson(CompletePersonDTO completePerson) throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
         EntityManager em = getEntityManager();
         checkIfComplete(completePerson);
         //Create Address
@@ -129,7 +130,6 @@ public class PersonFacade {
             em.close();
         }
     }*/
-    
     public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
@@ -202,7 +202,7 @@ public class PersonFacade {
         List<Hobby> hobbies = new ArrayList<>();
         String[] names = hobbiesNames.split(",");
         String[] descriptions = hobbieDescriptions.split(",");
-        if(names.length != descriptions.length){ 
+        if (names.length != descriptions.length) {
             throw new WrongPersonFormatException("Hobbies and hobbie descriptions aren't the same length");
         }
         for (int i = 0; i < descriptions.length; i++) {
@@ -285,29 +285,21 @@ public class PersonFacade {
         }
     }
 
-    private void checkIfComplete(CompletePersonDTO completePerson) throws WrongPersonFormatException {
-        if (completePerson.getEmail() == null || completePerson.getEmail().isEmpty()) {
-            throw new WrongPersonFormatException("Field E-mail is required");
-        } else if (completePerson.getHobbyDescription() == null || completePerson.getHobbyDescription().isEmpty()) {
-            throw new WrongPersonFormatException("Field Hobby description is required");
-        } else if (completePerson.getHobbyName() == null || completePerson.getHobbyName().isEmpty()) {
-            throw new WrongPersonFormatException("Field Hobby name is required");
-        } else if (completePerson.getPhoneDescription() == null || completePerson.getPhoneDescription().isEmpty()) {
-            throw new WrongPersonFormatException("Field Phone description is required");
-        } else if (completePerson.getPhoneNumber() == null || completePerson.getPhoneNumber().isEmpty()) {
-            throw new WrongPersonFormatException("Field Phone number is required");
-        } else if (completePerson.getStreet() == null || completePerson.getStreet().isEmpty()) {
-            throw new WrongPersonFormatException("Field Street is required");
-        } else if (completePerson.getZip() == null || completePerson.getZip().isEmpty()) {
-            throw new WrongPersonFormatException("Field Zip is required");
-        } else if (completePerson.getadditionalAddressInfo() == null || completePerson.getadditionalAddressInfo().isEmpty()) {
-            throw new WrongPersonFormatException("Field Additional address info is required");
-        } else if (completePerson.getfName() == null || completePerson.getfName().isEmpty()) {
-            throw new WrongPersonFormatException("Field First name is required");
-        } else if (completePerson.getlName() == null || completePerson.getlName().isEmpty()) {
-            throw new WrongPersonFormatException("Field Last name is required");
-        } else if(completePerson.getCity() == null || completePerson.getCity().isEmpty()){
-            throw new WrongPersonFormatException("Field City is required");
+    private void checkIfComplete(CompletePersonDTO completePerson) throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
+        StringBuilder sb = new StringBuilder();
+        Field[] fields = completePerson.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getType().equals(String.class)) {
+                field.setAccessible(true);
+                if (field.get(completePerson) == null) {
+                    sb.append(field.getName() + ", ");
+                }
+                //System.out.println("Variable name: " + field.getName());
+                //System.out.println("Varable value: " + field.get(completePerson));
+            }
+        }
+        if (sb.length() > 0) {
+            throw new WrongPersonFormatException("Field(s); " + sb.toString().substring(0, sb.length() - 2) + " is required");
         }
     }
 }

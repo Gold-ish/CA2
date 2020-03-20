@@ -250,8 +250,28 @@ public class PersonsResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
                 .body("code", equalTo(400))
-                .body("message", equalTo("Field First name is required"));
-
+                .body("message", equalTo("Field(s); fName is required"));
+    }
+    
+    @Test
+    public void testAddPersonMissingInput_Multiple() {
+        CompletePersonDTO cpDTO = new CompletePersonDTO();
+        cpDTO.setEmail("test-Email@mail.com");
+        cpDTO.setlName("testLastName");
+        cpDTO.setCity("testCity");
+        cpDTO.setadditionalAddressInfo("testHouse");
+        cpDTO.setHobbyDescription("Hobby Description Test, asdf");
+        cpDTO.setPhoneNumber("852134679");
+        cpDTO.setPhoneDescription("Phone Description Test");
+        given().contentType(ContentType.JSON)
+                .body(cpDTO)
+                .when()
+                .post("/persons")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
+                .body("code", equalTo(400))
+                .body("message", equalTo("Field(s); fName, street, zip, hobbyName is required"));
     }
 
     @Test

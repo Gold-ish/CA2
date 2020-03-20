@@ -149,7 +149,7 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testAddPerson() throws WrongPersonFormatException {
+    public void testAddPerson() throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
         //Person Data
         String fName = "Jane";
         String lName = "Doe";
