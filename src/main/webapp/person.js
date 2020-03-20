@@ -1,7 +1,7 @@
 document.getElementById("addBtn").addEventListener("click", postPerson);
 document.getElementById("editBtn").addEventListener("click", editPerson);
 document.getElementById("getAllBtn").addEventListener('click', (event) => {
-    fetchFunction("api/persons", insertAllPersonsInTable);
+    fetchFunction("api/persons/all", insertAllPersonsInTable);
 });
 
 function postPerson() {
@@ -39,7 +39,7 @@ function postPerson() {
             lName: lastN,
             email: email,
             street: street,
-            additionalInfo: aInfo,
+            additionalAddressInfo: aInfo,
             city: city,
             zip: zip,
             hobbyName: hobby,
@@ -103,10 +103,8 @@ function createTableFromArray(array) {
     console.log("Ello All");
     let tableHead = "<tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Street</th><th>City</th><th>Zip</th><th>Hobbies</th><th>Phones</th><th></th>";
     let htmlRows = "";
-    console.log(array);
 
-
-    array.forEach(element => {
+    array.personsList.forEach(element => {
         let temp = "<tr>" +
                 "<td>" + element.id + "</td>" +
                 "<td>" + element.fName + "</td>" +
