@@ -108,7 +108,7 @@ function fetchFunction(fetchUrl, callback) {
                 return response.json();
             })
             .then(function (data) {
-                if (data.message === null) {
+                if (data.message === null || data.message === 'undefined') {
                     callback(data);
                 } else {
                     document.getElementById("output").innerHTML = data.message;
