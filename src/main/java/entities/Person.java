@@ -1,11 +1,9 @@
 package entities;
 
-import dto.PersonDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -52,14 +50,6 @@ public class Person implements Serializable {
         this.email = email;
         this.fName = fName;
         this.lName = lName;
-    }
-
-    public Person(PersonDTO p) {
-        this.id = p.getId();
-        this.fName = p.getfName();
-        this.lName = p.getlName();
-        this.address = new Address(p.getStreet(), 
-                new CityInfo(p.getCity(), p.getZip()));
     }
 
     public Long getId() {
@@ -125,6 +115,15 @@ public class Person implements Serializable {
     public List<Hobby> getHobbies() {
         return hobbies;
     }
+    
+    public String getHobbiesName(){
+        StringBuilder sb  = new StringBuilder();
+        for (Hobby hobby : hobbies) {
+            sb.append(hobby.getName());
+            sb.append(", ");
+        }
+        return sb.toString().substring(0,sb.length()-2);
+    }
 
     public void setHobbies(List<Hobby> hobbies) {
         this.hobbies = hobbies;
@@ -135,31 +134,6 @@ public class Person implements Serializable {
             hobbies = new ArrayList<>();
         }
         hobbies.add(hobby);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.id);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Person other = (Person) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
     }
 
     @Override

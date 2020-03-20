@@ -1,8 +1,12 @@
 package facades;
 
+import dto.CompletePersonDTO;
 import dto.PersonDTO;
 import dto.PersonsDTO;
 import entities.*;
+import exception.NoContentFoundException;
+import exception.WrongPersonFormatException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,10 +52,13 @@ public class PersonFacade {
         }
     }
 
-    public PersonDTO getPersonById(int id) {
+    public PersonDTO getPersonById(int id) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             Person p = em.find(Person.class, (long) id);
+            if (p == null) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -59,49 +66,38 @@ public class PersonFacade {
     }
 
     //TODO post person without id <- Add new person
-    public PersonDTO addPerson(String fName, String lName, String email, String street,
-            String city, String zip, String hobbies, String phones) {
+    public PersonDTO addPerson(CompletePersonDTO completePerson) throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
         EntityManager em = getEntityManager();
+        checkIfComplete(completePerson);
         //Create Address
-        /*
-        Not working it should see if there allready is a address in the db that is the same and then reuse it.
-        Not create a duplicate entry of it.
-         */
-        CityInfo cityInfo = new CityInfo(city, zip);
-        Address adr = new Address(street, cityInfo);
-        /*Address checkAdr = checkAddress(adr, em);
+        CityInfo cityInfo = new CityInfo(completePerson.getCity(), completePerson.getZip());
+        Address adr = new Address(completePerson.getStreet(), completePerson.getadditionalAddressInfo(), cityInfo);
+        Address checkAdr = checkAddress(adr, em);
         if (checkAdr != null) {
             adr = checkAdr;
-        }*/
+        }
         //Create Hobby
-        /*
-        Not working it should see if there allready is a Hobby in the db that is the same and then reuse it.
-        Not create a duplicate entry of it.
-         */
         List<Hobby> hobbiesList = new ArrayList<>();
-        if (hobbies != null) {
-            hobbiesList = makeHobbyList(hobbies);
-            /*List<Hobby> checkHob = checkHobby(hobbiesList, em);
-            if (checkHob != null) {
-                hobbiesList = checkHob;
-            }*/
+        if (completePerson.getHobbyName() != null) {
+            hobbiesList = makeHobbyList(completePerson.getHobbyName(), completePerson.getHobbyDescription());
+            List<Hobby> checkHob = checkHobby(hobbiesList, em);
+            hobbiesList = checkHob;
         }
         //Create Phone
-        /*
-        If there allready is a phone with the same number then it shouldn't be able to add it again.
-        2 different people can't have the same phone number.
-         */
         Set<Phone> phonesSet = new HashSet<>();
-        if (phones != null) {
-            phonesSet = makePhoneSet(phones);
-            /*Set<Phone> checkPhn = checkPhone(phonesSet, em);
-            if (checkPhn != null) {
+        if (completePerson.getPhoneNumber() != null) {
+//TODO Addtest
+            phonesSet = makePhoneSet(completePerson.getPhoneNumber());
+            phonesSet.iterator().next().setDescription(completePerson.getPhoneDescription());
+            Set<Phone> checkPhn = checkPhone(phonesSet, em);
+            if (checkPhn.iterator().next().getId() != null) {
+                throw new WrongPersonFormatException("Phone number allready in use");
+            } else {
                 phonesSet = checkPhn;
-            }*/
+            }
         }
-
         //Create Person
-        Person p = new Person(email, fName, lName);
+        Person p = new Person(completePerson.getEmail(), completePerson.getfName(), completePerson.getlName());
         phonesSet.forEach((phone) -> {
             phone.setPerson(p);
         });
@@ -111,9 +107,7 @@ public class PersonFacade {
             p.setAddress(adr);
             p.setHobbies(hobbiesList);
             p.setPhones(phonesSet);
-            System.out.println(p.getHobbies());
             em.getTransaction().commit();
-            System.out.println(p.getHobbies());
             return new PersonDTO(p);
         } finally {
             em.close();
@@ -121,27 +115,93 @@ public class PersonFacade {
     }
 
     //TODO put person update person based on id
-    public PersonDTO editPerson(PersonDTO p) {
+    public PersonDTO editPerson(CompletePersonDTO cp) throws WrongPersonFormatException, NoContentFoundException, IllegalArgumentException, IllegalAccessException {
         EntityManager em = getEntityManager();
-        Person person = new Person(p);
-        person.setPhones(makePhoneSet(p.getPhones()));
-        person.setHobbies(makeHobbyList(p.getHobbies()));
         try {
             em.getTransaction().begin();
-            em.merge(person);
+            Person p = em.find(Person.class, (long) cp.getId());
+            if (p == null) {
+                throw new NoContentFoundException("No content found for this request");
+            }
+            PersonFieldsToEditCheck(cp, p, em);
             em.getTransaction().commit();
-            return new PersonDTO(person);
+            return new PersonDTO(p);
         } finally {
             em.close();
         }
     }
-    //TODO Fejlhåndtering på getResultList.get(0)
-    //TODO get person based on phone number
-    public PersonDTO getPersonByPhone(String number) {
+
+    private void PersonFieldsToEditCheck(CompletePersonDTO cp, Person person, EntityManager em) throws SecurityException, IllegalAccessException, WrongPersonFormatException, IllegalArgumentException {
+        Field[] fields = cp.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getType().equals(String.class)) {
+                field.setAccessible(true);
+                if (field.get(cp) != null) {
+                    switch (field.getName()) {
+                        case "email":
+                            person.setEmail(cp.getEmail());
+                            break;
+                        case "fName":
+                            person.setfName(cp.getfName());
+                            break;
+                        case "lName":
+                            person.setlName(cp.getlName());
+                            break;
+                        case "street":
+                            person.getAddress().setStreet(cp.getStreet());
+                            break;
+                        case "additionalAddressInfo":
+                            person.getAddress().setAdditionalInfo(cp.getadditionalAddressInfo());
+                            break;
+                        case "city":
+                            person.getAddress().getCityInfo().setCity(cp.getCity());
+                            break;
+                        case "zip":
+                            person.getAddress().getCityInfo().setZipCode(cp.getZip());
+                            break;
+                        case "hobbyName":
+                            List<Hobby> hobbiesList = new ArrayList();
+                            hobbiesList = makeHobbyList(cp.getHobbyName(), cp.getHobbyDescription());
+                            List<Hobby> checkHob = checkHobby(hobbiesList, em);
+                            hobbiesList = checkHob;
+                            person.setHobbies(hobbiesList);
+                            break;
+                        case "phoneNumber":
+                            person.setPhones(makePhoneSet(cp.getPhoneNumber()));
+                            if (cp.getPhoneDescription() == null) {
+                                throw new WrongPersonFormatException("No phone description found.");
+                            } else {
+                                person.getPhones().iterator().next().setDescription(cp.getPhoneDescription());
+                                person.getPhones().iterator().next().setPerson(person);
+//                                Set<Phone> checkPhn = checkPhone(person.getPhones(), em);
+//                                if (checkPhn.iterator().next().getId() != null) {
+//                                    throw new WrongPersonFormatException("Phone number allready in use");
+//                                } else {
+//                                    person.setPhones(checkPhn);
+//                                }
+                                /*
+                                if (checkPhn.iterator().next().getId() != null) {
+                                    throw new WrongPersonFormatException("Phone number allready in use");
+                                } else {
+                                    phonesSet = checkPhn;
+                                }
+                                */
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    public PersonDTO getPersonByPhone(String number) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Phone> q = em.createQuery("SELECT p FROM Phone p WHERE p.number = :number", Phone.class);
             q.setParameter("number", number);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonDTO(q.getResultList().get(0).getPerson());
         } finally {
             em.close();
@@ -149,21 +209,24 @@ public class PersonFacade {
     }
 
     //TODO get JSON array of who have a certain hobby
-    public PersonsDTO getAllPersonsByHobby(String hobby) {
+    public PersonsDTO getAllPersonsByHobby(String hobby) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
                     + "INNER JOIN p.hobbies Hobby "
                     + "WHERE Hobby.name = :hobby", Person.class);
             q.setParameter("hobby", hobby);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
         }
     }
-        
+
     //TODO get JSON array of persons who live in a certain city
-    public PersonsDTO getPersonsFromCity(String city) {
+    public PersonsDTO getPersonsFromCity(String city) throws NoContentFoundException {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p "
@@ -171,13 +234,15 @@ public class PersonFacade {
                     + "JOIN address.cityInfo CityInfo "
                     + "WHERE CityInfo.city = :city", Person.class);
             q.setParameter("city", city);
+            if (q.getResultList().size() <= 0) {
+                throw new NoContentFoundException("No content found for this request");
+            }
             return new PersonsDTO(q.getResultList());
         } finally {
             em.close();
         }
     }
 
-    //TODO get person count based on hobby - Needs to return a number with how many people have this hobby  
     public int getAmountOfPersonsWithHobby(String hobby) {
         EntityManager em = getEntityManager();
         try {
@@ -197,13 +262,16 @@ public class PersonFacade {
     }
 
     //Helping methods
-    private List<Hobby> makeHobbyList(String hobbiesStr) {
+    private List<Hobby> makeHobbyList(String hobbiesNames, String hobbieDescriptions) throws WrongPersonFormatException {
         List<Hobby> hobbies = new ArrayList<>();
-        String[] values = hobbiesStr.split(",");
-        List<String> strList = Arrays.asList(values);
-        strList.stream().map((hobbyName) -> new Hobby(hobbyName.trim(), "")).forEachOrdered((hobby) -> {
-            hobbies.add(hobby);
-        });
+        String[] names = hobbiesNames.split(",");
+        String[] descriptions = hobbieDescriptions.split(",");
+        if (names.length != descriptions.length) {
+            throw new WrongPersonFormatException("Hobbies and hobbie descriptions aren't the same length");
+        }
+        for (int i = 0; i < descriptions.length; i++) {
+            hobbies.add(new Hobby(names[i].trim(), descriptions[i].trim()));
+        }
         return hobbies;
     }
 
@@ -216,7 +284,7 @@ public class PersonFacade {
         });
         return phones;
     }
-    
+
     private Set<Phone> makePhoneSet(Set<String> strSet) {
         Set<Phone> phones = new HashSet<>();
         strSet.stream().map((phoneNo) -> new Phone(phoneNo.trim(), "")).forEachOrdered((phone) -> {
@@ -226,13 +294,11 @@ public class PersonFacade {
     }
 
     //addCheck methods
-    /*
     private Address checkAddress(Address adr, EntityManager em) {
         try {
-            TypedQuery<Address> q = em.createQuery("SELECT a FROM Address a WHERE a.city = :city AND a.street = :street AND a.zip = :zip", Address.class);
+            TypedQuery<Address> q = em.createQuery("SELECT a FROM Address a WHERE "
+                    + "a.street = :street", Address.class);
             q.setParameter("street", adr.getStreet());
-            q.setParameter("city", adr.getCityInfo().getCity());
-            q.setParameter("zip", adr.getCityInfo().getZipCode());
             Address result = q.getSingleResult();
             return result;
         } catch (Exception e) {
@@ -243,11 +309,16 @@ public class PersonFacade {
 
     private List<Hobby> checkHobby(List<Hobby> hobbiesList, EntityManager em) {
         try {
-            List<Hobby> result = null;
+            List<Hobby> result = new ArrayList();
             for (Hobby hobby : hobbiesList) {
                 TypedQuery<Hobby> q = em.createQuery("SELECT a FROM Hobby a WHERE a.name = :name", Hobby.class);
                 q.setParameter("name", hobby.getName());
-                Hobby addToResult = q.getSingleResult();
+                Hobby addToResult = new Hobby();
+                if (q.getResultList().isEmpty()) {
+                    addToResult = hobby;
+                } else {
+                    addToResult = q.getSingleResult();
+                }
                 result.add(addToResult);
             }
             return result;
@@ -259,11 +330,16 @@ public class PersonFacade {
 
     private Set<Phone> checkPhone(Set<Phone> phonesSet, EntityManager em) {
         try {
-            Set<Phone> result = null;
+            Set<Phone> result = new HashSet();
             for (Phone phone : phonesSet) {
                 TypedQuery<Phone> q = em.createQuery("SELECT a FROM Phone a WHERE a.number = :number", Phone.class);
                 q.setParameter("number", phone.getNumber());
-                Phone addToResult = q.getSingleResult();
+                Phone addToResult = new Phone();
+                if (q.getResultList().isEmpty()) {
+                    addToResult = phone;
+                } else {
+                    addToResult = q.getSingleResult();
+                }
                 result.add(addToResult);
             }
             return result;
@@ -271,5 +347,23 @@ public class PersonFacade {
             //System.out.println(e);
             return null;
         }
-    }*/
+    }
+
+    private void checkIfComplete(CompletePersonDTO completePerson) throws WrongPersonFormatException, IllegalArgumentException, IllegalAccessException {
+        StringBuilder sb = new StringBuilder();
+        Field[] fields = completePerson.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getType().equals(String.class)) {
+                field.setAccessible(true);
+                if (field.get(completePerson) == null || ((String) field.get(completePerson)).isEmpty()) {
+                    sb.append(field.getName() + ", ");
+                }
+                //System.out.println("Variable name: " + field.getName());
+                //System.out.println("Varable value: " + field.get(completePerson));
+            }
+        }
+        if (sb.length() > 0) {
+            throw new WrongPersonFormatException("Field(s); " + sb.toString().substring(0, sb.length() - 2) + " is required");
+        }
+    }
 }

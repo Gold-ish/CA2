@@ -48,5 +48,11 @@ public class PersonsDTO {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "PersonsDTO{" + "personsList=" + personsList.toString() + '}';
+    }
+    
     
 }
